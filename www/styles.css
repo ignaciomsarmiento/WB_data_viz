@@ -1,0 +1,287 @@
+body{
+  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #fff;
+  color: #1a1a1a;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header styles */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  z-index: 2000;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+.wb-logo {
+  height: 44px;
+  float: right;
+}
+
+/* Navigation menu styles */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-link {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #0f3559;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  background: #0f3559;
+  color: #fff;
+}
+
+/* Landing page styles */
+.landing-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+  padding: 2rem;
+  background: linear-gradient(180deg, rgba(248, 249, 250, 0.8), #fff);
+  padding-top: 70px;
+}
+
+.main-title {
+  font-family: 'Source Serif Pro', Georgia, serif;
+  font-size: 3.5rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #333;
+  font-weight: 400;
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+.intro-text {
+  font-size: 1.125rem;
+  color: #111;
+  max-width: 600px;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+}
+
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 2rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #fff;
+  background: #0f3559;
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: none;
+  cursor: pointer;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cta-button:hover {
+  background: #1a4a7a;
+  color: #fff;
+}
+
+.hero-image {
+  max-height: 500px;
+  object-fit: contain;
+  width: 100%;
+}
+
+/* Country selection page styles */
+.country-main-title { 
+  font-family:'Source Serif Pro', Georgia, serif; 
+  font-size: 48px; 
+  font-weight: 600; 
+  line-height:1.1; 
+  margin-left: 78px; 
+  margin-top: 24px; 
+}
+
+.country-subtitle { 
+  font-size: 20px; 
+  color:#333; 
+  margin: 10px 0 24px 78px; 
+  font-weight: 400; 
+}
+
+.xlines { 
+  margin-left: 78px; 
+  margin-top: 20px; 
+  max-width: 980px; 
+  color:#111; 
+  font-size: 16px; 
+  letter-spacing: 1px; 
+  line-height: 1.6; 
+}
+
+/* Pill buttons row */
+.pill-row { 
+  margin-left: 60px; 
+  margin-top: 40px; 
+  display:flex; 
+  gap:48px; 
+  flex-wrap: wrap; 
+}
+
+.pill {
+  display:flex; 
+  align-items:center; 
+  justify-content:center;
+  width: 280px; 
+  height: 140px; 
+  border-radius: 9999px;
+  background:#0f3559; 
+  color:#fff; 
+  font-weight: 600; 
+  font-size: 20px;
+  border: 0; 
+  box-shadow: 0 2px 8px rgba(0,0,0,.08); 
+  cursor:pointer;
+}
+
+.pill:focus { 
+  outline:none; 
+}
+
+.pill:hover { 
+  filter: brightness(1.05); 
+}
+
+/* Topic selection page styles */
+.topic-page {
+  padding: 80px 20px 40px 20px;
+  min-height: 100vh;
+}
+
+.topic-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.topic-title {
+  font-family: 'Source Serif Pro', Georgia, serif;
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+}
+
+.topic-subtitle {
+  font-size: 1.125rem;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.topic-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.topic-card:hover {
+  background: #0f3559;
+  color: white;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.topic-card h3 {
+  font-family: 'Source Serif Pro', Georgia, serif;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.topic-card p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.topic-card:hover p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Content area styles */
+.content-area {
+  padding-top: 80px;
+  min-height: 100vh;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .main-title, .country-main-title {
+    font-size: 2rem;
+    margin-left: 20px;
+  }
+  
+  .subtitle, .country-subtitle {
+    margin-left: 20px;
+  }
+  
+  .pill-row {
+    margin-left: 20px;
+  }
+  
+  .topic-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .landing-section {
+    padding: 1rem;
+    padding-top: 60px;
+  }
+  
+  .hero-image {
+    max-height: 300px;
+  }
+  
+  .nav-menu {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .nav-link {
+    font-size: 1rem;
+    padding: 6px 10px;
+  }
+}

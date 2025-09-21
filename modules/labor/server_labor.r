@@ -1,5 +1,5 @@
-
 # modules/labor/server.R
+library(tidyverse)
 
 labor_server <- function(input, output, session) {
   

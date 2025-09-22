@@ -222,18 +222,7 @@ labor_server <- function(input, output, session) {
       return(data.frame())
     }
     
-    # Filter by selected bonus types if any are selected
-    if (!is.null(input$bonus_types) && length(input$bonus_types) > 0) {
-      bonus_cols <- paste0("Bonus_", gsub("Bonus_", "", input$bonus_types))
-      keep_cols <- c("Country", "Code", bonus_cols)
-      # Ensure all columns exist before filtering
-      available_cols <- names(data)[names(data) %in% keep_cols]
-      if (length(available_cols) > 2) {  # At least Country, Code, and one bonus column
-        data <- data[, available_cols, drop = FALSE]
-      }
-    }
-    
-    # Convert to long format
+    # Convert to long format - show all bonus types since we removed the filter
     data_long <- data %>%
       pivot_longer(cols = starts_with("Bonus_"), 
                    names_to = "bonus_type", 
@@ -291,7 +280,7 @@ labor_server <- function(input, output, session) {
     data <- processed_data()
     
     if(nrow(data) == 0) {
-      return(plot_ly() %>%
+      return(plot_ly(type = 'scatter', mode = 'markers') %>%
                add_annotations(text = "No data available for selected filters", 
                                x = 0.5, y = 0.5, xref = "paper", yref = "paper",
                                showarrow = FALSE, 
@@ -363,16 +352,17 @@ labor_server <- function(input, output, session) {
         breaks = seq(0, ceiling(y_max), by = 1)
       )
     
-    if(isTRUE(input$show_values) && nrow(data) > 0) {
-      data_labels <- data %>%
-        group_by(x_label) %>%
-        arrange(desc(bonus_type)) %>%
-        mutate(cumsum_value = cumsum(value), 
-               label_pos = cumsum_value - value/2)
-      p <- p + geom_text(data = data_labels, 
-                         aes(y = label_pos, label = round(value, 1)),
-                         size = 2.5, color = "white", fontface = "bold")
-    }
+    # Remove the "show values" feature since the option was removed
+    # if(isTRUE(input$show_values) && nrow(data) > 0) {
+    #   data_labels <- data %>%
+    #     group_by(x_label) %>%
+    #     arrange(desc(bonus_type)) %>%
+    #     mutate(cumsum_value = cumsum(value), 
+    #            label_pos = cumsum_value - value/2)
+    #   p <- p + geom_text(data = data_labels, 
+    #                      aes(y = label_pos, label = round(value, 1)),
+    #                      size = 2.5, color = "white", fontface = "bold")
+    # }
     
     # Add country separators
     if (nrow(data) > 1) {

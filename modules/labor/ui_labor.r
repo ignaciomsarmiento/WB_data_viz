@@ -37,7 +37,7 @@ labor_ui <- function(id) {
     
     sidebarLayout(
       sidebarPanel(
-        width = 2,
+        width = 3,  # Increased from 2 to 3
         div(class = "filter-panel",
             h4("Filters", style = "margin-top:0; font-size:18px;"),
             
@@ -57,23 +57,7 @@ labor_ui <- function(id) {
                 actionButton(ns("btn_peru"), "Peru", class = "btn country-btn")
             ),
             
-            h5("Bonus Types:", style = "font-size:15px; margin:10px 0 6px 0;"),
-            div(class = "checkbox-group",
-                checkboxGroupInput(
-                  ns("bonus_types"), NULL,
-                  choices = list(
-                    "Bonus 1" = "Bonus_1",
-                    "Bonus 2" = "Bonus_2",
-                    "Bonus 3" = "Bonus_3",
-                    "Bonus 4" = "Bonus_4",
-                    "Bonus 5" = "Bonus_5"
-                  ),
-                  selected = c("Bonus_1", "Bonus_2", "Bonus_3", "Bonus_4", "Bonus_5")
-                )
-            ),
-            
             h5("Additional Options:", style = "font-size:15px; margin:10px 0 6px 0;"),
-            checkboxInput(ns("show_values"), "Show values on bars", value = FALSE),
             checkboxInput(ns("show_notes"), "Show explanatory notes", value = TRUE),
             
             div(style = "font-size:13px; color:#666; border-top:1px solid #eee; padding-top:10px; margin-top:8px;",
@@ -84,7 +68,7 @@ labor_ui <- function(id) {
       ),
       
       mainPanel(
-        width = 10,
+        width = 9,  # Decreased from 10 to 9 to balance with wider sidebar
         plotlyOutput(ns("labor_costs_plot"), height = "650px"),
         conditionalPanel(
           condition = paste0("input['", ns("show_notes"), "']"),

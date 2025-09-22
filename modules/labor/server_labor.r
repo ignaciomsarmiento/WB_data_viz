@@ -264,16 +264,16 @@ labor_server <- function(input, output, session) {
     data_long
   })
   
-  # Data summary
-  output$data_summary <- renderText({
-    data <- processed_data()
-    if(nrow(data) == 0) return("No data available for selected filters")
-    n_countries <- length(unique(data$Country))
-    n_entries <- nrow(data)
-    avg_bonus <- round(mean(data$value, na.rm = TRUE), 2)
-    paste0(n_countries, " countries, ", n_entries, " data points\nAverage bonus: ", 
-           avg_bonus, " monthly wages")
-  })
+  # Data summary - removed since UI no longer includes this
+  # output$data_summary <- renderText({
+  #   data <- processed_data()
+  #   if(nrow(data) == 0) return("No data available for selected filters")
+  #   n_countries <- length(unique(data$Country))
+  #   n_entries <- nrow(data)
+  #   avg_bonus <- round(mean(data$value, na.rm = TRUE), 2)
+  #   paste0(n_countries, " countries, ", n_entries, " data points\nAverage bonus: ", 
+  #          avg_bonus, " monthly wages")
+  # })
   
   # Main plot
   output$labor_costs_plot <- renderPlotly({

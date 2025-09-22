@@ -10,9 +10,10 @@ labor_ui <- function(id) {
         .filter-panel { background:#f8f9fa; padding:14px; border:1px solid #e9ecef; border-radius:8px; margin-bottom:16px; }
         .country-buttons { display:flex; flex-direction:column; gap:6px; margin-bottom:10px; }
         .country-btn {
-          display:block; width:100%; text-align:left; font-size:13px; padding:8px 12px;
+          display:block; width:100%; text-align:left; font-size:12px; padding:6px 10px;
           border:1px solid #ddd; background:#fff; color:#333; border-radius:4px;
           transition: background-color .2s ease, border-color .2s ease;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .country-btn:hover { background:#f5f5f5; border-color:#999; }
         .selected-country { background:#d62728 !important; color:#fff !important; border-color:#d62728 !important; font-weight:500; }
@@ -37,7 +38,7 @@ labor_ui <- function(id) {
     
     sidebarLayout(
       sidebarPanel(
-        width = 3,  # Increased from 2 to 3
+        width = 3,  # Using integer width
         div(class = "filter-panel",
             h4("Filters", style = "margin-top:0; font-size:18px;"),
             
@@ -58,17 +59,12 @@ labor_ui <- function(id) {
             ),
             
             h5("Additional Options:", style = "font-size:15px; margin:10px 0 6px 0;"),
-            checkboxInput(ns("show_notes"), "Show explanatory notes", value = TRUE),
-            
-            div(style = "font-size:13px; color:#666; border-top:1px solid #eee; padding-top:10px; margin-top:8px;",
-                h5("Data Summary:", style = "font-size:14px; margin-bottom:6px;"),
-                textOutput(ns("data_summary"))
-            )
+            checkboxInput(ns("show_notes"), "Show explanatory notes", value = TRUE)
         )
       ),
       
       mainPanel(
-        width = 9,  # Decreased from 10 to 9 to balance with wider sidebar
+        width = 9,  # Using integer width to balance with width 3
         plotlyOutput(ns("labor_costs_plot"), height = "650px"),
         conditionalPanel(
           condition = paste0("input['", ns("show_notes"), "']"),

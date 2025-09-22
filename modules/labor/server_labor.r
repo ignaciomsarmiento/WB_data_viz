@@ -41,6 +41,54 @@ labor_server <- function(input, output, session) {
       )
   }
   
+  # Country information for tooltips
+  country_info <- list(
+    "Argentina" = list(
+      yearly_bonuses = "1 monthly wage",
+      legislation = "Law 23041 (1983)."
+    ),
+    "Bolivia" = list(
+      yearly_bonuses = "Christmas bonus: 1 monthly wage.<br>Economic growth bonus \"Doble aguinaldo\": 1 monthly wage awarded when the annual June-to-June GDP growth exceeds 4%.<br>Quinquennial bonus: Employees who have been in service for at least 5 years are entitled to five monthly wages paid every five years.<br>Employment tenure bonus (\"Antiguedad\"): 3 MW multiplied by a factor that varies with length of tenure:<br>- 2-4 years: 5%<br>- 5-7 years: 11%<br>- 8-10 years: 18%<br>- 11-14 years: 26%<br>- 15-19 years: 34%<br>- 20-24 years: 42%<br>- 25 or more years: 50%<br>Only employees working within 50km of international borders: Border subsidy: 20% of wages.",
+      legislation = "Law of December 18th (1944) - Christmas bonus.<br>Supreme Decree 21137 (1985) - Bono antiguedad.<br>Supreme Decree 522 (2010) Bono quinquenio.<br>Supreme Decree 1802 (2013) - Doble aguinaldo."
+    ),
+    "Brazil" = list(
+      yearly_bonuses = "Yearly bonus: 1 wage<br>Vacation bonus: equivalent to 1/3 wages.",
+      legislation = "Law 4090 (1962)."
+    ),
+    "Chile" = list(
+      yearly_bonuses = "No mandatory bonuses.",
+      legislation = "Law 18620 (1987) - Labor Code."
+    ),
+    "Colombia" = list(
+      yearly_bonuses = "Workers with wages under 13MW: 1 wage",
+      legislation = "Law 1788 (2016)."
+    ),
+    "Dominican Republic" = list(
+      yearly_bonuses = "Workers earning up to 5 MW: 1 wage<br>Workers earning more than 5 MW: 5 MW",
+      legislation = "Ley 16 (1992) - Labor Code."
+    ),
+    "Ecuador" = list(
+      yearly_bonuses = "2 wages",
+      legislation = "Labor Code (2012)."
+    ),
+    "Honduras" = list(
+      yearly_bonuses = "1 wage",
+      legislation = "Decree No. 112. (1982) Ley del Séptimo Día y Décimo Tercer Mes en Concepto de Aguinaldo."
+    ),
+    "Mexico" = list(
+      yearly_bonuses = "Yearly bonus (Aguinaldo): 0.5 wages<br>Vacation bonus: bonus equivalent to 25% of the wages corresponding to their vacation period.",
+      legislation = "Federal Labor Law (1970). Last reform 2023."
+    ),
+    "Paraguay" = list(
+      yearly_bonuses = "1 wage",
+      legislation = "Law No. 213 (2014). Labor Code."
+    ),
+    "Peru" = list(
+      yearly_bonuses = "Workers in medium and large businesses: 2 wages + corresponding employer health contribution (9% or 6.75% depending on modality).<br>Workers in small and micro businesses: 1 wage.<br>Family bonus: monthly bonus equivalent to 10% of the MW for workers who have children under 18 or children under 24 attending tertiary education.",
+      legislation = "Law No. 27735. Yearly Bonus.<br>Law No. 25129. Family Bonus.<br>Decreto Supremo No. 013-2013-PRODUCE."
+    )
+  )
+  
   # Data
   labor_data_raw <- data.frame(
     Country = c("Argentina", "Bolivia", "Bolivia", "Bolivia", "Bolivia", "Bolivia",
@@ -178,14 +226,32 @@ labor_server <- function(input, output, session) {
       mutate(
         bonus_type = paste("Bonus", bonus_type),
         x_label = paste0(Code, "\n", wrap_country(Country)),
-        x_order = paste(Country, Code, sep = "_"),
-        tooltip_text = paste0(
-          "<b>", Country, ifelse(Code != "", paste(" (", Code, ")", sep = ""), ""), "</b><br>",
-          bonus_type, ": <b>", round(value, 2), "</b> monthly wages"
-        )
+        x_order = paste(Country, Code, sep = "_")
       ) %>%
       arrange(Country, Code, bonus_type) %>%
       mutate(x_label = factor(x_label, levels = unique(x_label)))
+    
+    # Add custom tooltip text with country information
+    data_long$tooltip_text <- sapply(seq_len(nrow(data_long)), function(i) {
+      country <- data_long$Country[i]
+      info <- country_info[[country]]
+      
+      if (!is.null(info)) {
+        paste0(
+          "<b style='color: #0f3559; font-size: 16px;'>", country, "</b><br>",
+          "────────────────────────<br>",
+          "<b style='color: #d62728; font-size: 14px;'>Yearly Bonuses:</b><br>",
+          "<span style='font-size: 13px; line-height: 1.4;'>", gsub("<br>", "<br>• ", paste0("• ", info$yearly_bonuses)), "</span><br><br>",
+          "<b style='color: #d62728; font-size: 14px;'>Legislation:</b><br>",
+          "<span style='font-size: 13px; line-height: 1.4;'>", gsub("<br>", "<br>• ", paste0("• ", info$legislation)), "</span>"
+        )
+      } else {
+        paste0(
+          "<b style='color: #0f3559; font-size: 14px;'>", country, ifelse(data_long$Code[i] != "", paste(" (", data_long$Code[i], ")", sep = ""), ""), "</b><br>",
+          data_long$bonus_type[i], ": <b>", round(data_long$value[i], 2), "</b> monthly wages"
+        )
+      }
+    })
     
     data_long
   })
@@ -299,10 +365,13 @@ labor_server <- function(input, output, session) {
     ggplotly(p, tooltip = "text") %>%
       layout(
         hovermode = 'closest',
-        hoverlabel = list(bgcolor = "rgba(255, 255, 255, 0.95)", 
-                          bordercolor = "#d0d0d0", 
-                          borderwidth = 1,
-                          font = list(family = "Arial", size = 11, color = "#1a1a1a")),
+        hoverlabel = list(
+          bgcolor = "white",
+          bordercolor = "#0f3559",
+          borderwidth = 2,
+          font = list(family = "Arial", size = 12, color = "#333333"),
+          align = "left"
+        ),
         showlegend = FALSE,
         margin = list(l = 60, r = 30, t = 30, b = 100),
         plot_bgcolor = 'white',

@@ -5,6 +5,7 @@ body{
   margin: 0;
   padding: 0;
   padding-top: 80px; /* Add padding to body to account for fixed header */
+  font-size: 16px; /* Base font size increased */
 }
 
 /* Header styles */
@@ -36,11 +37,11 @@ body{
 
 .nav-link {
   font-family: 'Source Sans Pro', sans-serif;
-  font-size: 1.1rem;
+  font-size: 1.3rem; /* Increased from 1.1rem */
   font-weight: 600;
   color: #0f3559;
   text-decoration: none;
-  padding: 8px 12px;
+  padding: 10px 16px; /* Increased padding */
   border-radius: 4px;
   transition: background-color 0.2s ease, color 0.2s ease;
   cursor: pointer;
@@ -65,7 +66,7 @@ body{
 
 .main-title {
   font-family: 'Source Serif Pro', Georgia, serif;
-  font-size: 3.5rem;
+  font-size: 4rem; /* Increased from 3.5rem */
   font-weight: 600;
   line-height: 1.1;
   color: #1a1a1a;
@@ -73,7 +74,7 @@ body{
 }
 
 .subtitle {
-  font-size: 1.25rem;
+  font-size: 1.5rem; /* Increased from 1.25rem */
   color: #333;
   font-weight: 400;
   margin-bottom: 2rem;
@@ -81,7 +82,7 @@ body{
 }
 
 .intro-text {
-  font-size: 1.125rem;
+  font-size: 1.3rem; /* Increased from 1.125rem */
   color: #111;
   max-width: 600px;
   line-height: 1.6;
@@ -92,8 +93,8 @@ body{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 2rem;
-  font-size: 1.25rem;
+  padding: 1rem 2.5rem; /* Increased padding */
+  font-size: 1.4rem; /* Increased from 1.25rem */
   font-weight: 600;
   color: #fff;
   background: #0f3559;
@@ -120,7 +121,7 @@ body{
 /* Country selection page styles */
 .country-main-title { 
   font-family:'Source Serif Pro', Georgia, serif; 
-  font-size: 48px; 
+  font-size: 3.5rem; /* Increased from 48px */
   font-weight: 600; 
   line-height:1.1; 
   margin-left: 78px; 
@@ -128,7 +129,7 @@ body{
 }
 
 .country-subtitle { 
-  font-size: 20px; 
+  font-size: 1.4rem; /* Increased from 20px */
   color:#333; 
   margin: 10px 0 24px 78px; 
   font-weight: 400; 
@@ -139,7 +140,7 @@ body{
   margin-top: 20px; 
   max-width: 980px; 
   color:#111; 
-  font-size: 16px; 
+  font-size: 1.1rem; /* Increased from 16px */
   letter-spacing: 1px; 
   line-height: 1.6; 
 }
@@ -163,7 +164,7 @@ body{
   background:#0f3559; 
   color:#fff; 
   font-weight: 600; 
-  font-size: 20px;
+  font-size: 1.4rem; /* Increased from 20px */
   border: 0; 
   box-shadow: 0 2px 8px rgba(0,0,0,.08); 
   cursor:pointer;
@@ -190,14 +191,14 @@ body{
 
 .topic-title {
   font-family: 'Source Serif Pro', Georgia, serif;
-  font-size: 2.5rem;
+  font-size: 3rem; /* Increased from 2.5rem */
   font-weight: 600;
   color: #1a1a1a;
   margin-bottom: 1rem;
 }
 
 .topic-subtitle {
-  font-size: 1.125rem;
+  font-size: 1.3rem; /* Increased from 1.125rem */
   color: #666;
   max-width: 600px;
   margin: 0 auto;
@@ -230,12 +231,12 @@ body{
 
 .topic-card h3 {
   font-family: 'Source Serif Pro', Georgia, serif;
-  font-size: 1.5rem;
+  font-size: 1.8rem; /* Increased from 1.5rem */
   margin-bottom: 15px;
 }
 
 .topic-card p {
-  font-size: 0.95rem;
+  font-size: 1.1rem; /* Increased from 0.95rem */
   line-height: 1.5;
   margin: 0;
 }

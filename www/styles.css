@@ -4,6 +4,7 @@ body{
   color: #1a1a1a;
   margin: 0;
   padding: 0;
+  padding-top: 80px; /* Add padding to body to account for fixed header */
 }
 
 /* Header styles */
@@ -17,6 +18,8 @@ body{
   padding: 10px 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: block;
+  height: 64px; /* Set explicit height */
+  box-sizing: border-box; /* Include padding in height calculation */
 }
 
 .wb-logo {
@@ -50,14 +53,14 @@ body{
 
 /* Landing page styles */
 .landing-section {
-  min-height: 100vh;
+  min-height: calc(100vh - 80px); /* Subtract header height from viewport */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: left;
   padding: 2rem;
   background: linear-gradient(180deg, rgba(248, 249, 250, 0.8), #fff);
-  padding-top: 70px;
+  padding-top: 20px; /* Reduced since body now has padding */
 }
 
 .main-title {
@@ -176,8 +179,8 @@ body{
 
 /* Topic selection page styles */
 .topic-page {
-  padding: 80px 20px 40px 20px;
-  min-height: 100vh;
+  padding: 20px 20px 40px 20px; /* Reduced top padding since body has padding */
+  min-height: calc(100vh - 80px); /* Account for header height */
 }
 
 .topic-header {
@@ -243,12 +246,25 @@ body{
 
 /* Content area styles */
 .content-area {
-  padding-top: 80px;
-  min-height: 100vh;
+  padding-top: 20px; /* Reduced since body has padding */
+  min-height: calc(100vh - 80px); /* Account for header height */
 }
 
 /* Responsive styles */
 @media (max-width: 768px) {
+  body {
+    padding-top: 70px; /* Slightly less padding on mobile */
+  }
+  
+  .header {
+    height: 60px; /* Smaller header on mobile */
+    padding: 8px 15px;
+  }
+  
+  .wb-logo {
+    height: 36px; /* Smaller logo on mobile */
+  }
+  
   .main-title, .country-main-title {
     font-size: 2rem;
     margin-left: 20px;
@@ -268,7 +284,18 @@ body{
   
   .landing-section {
     padding: 1rem;
-    padding-top: 60px;
+    padding-top: 10px; /* Minimal top padding since body has padding */
+    min-height: calc(100vh - 70px); /* Account for smaller mobile header */
+  }
+  
+  .topic-page {
+    padding: 10px 20px 40px 20px;
+    min-height: calc(100vh - 70px);
+  }
+  
+  .content-area {
+    padding-top: 10px;
+    min-height: calc(100vh - 70px);
   }
   
   .hero-image {

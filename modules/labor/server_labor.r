@@ -208,21 +208,38 @@ labor_server <- function(input, output, session) {
   
   # Process data
   processed_data <- reactive({
-    data <- labor_data_raw[labor_data_raw$Country %in% selected_countries(), ]
+    # Ensure we have valid country selection
+    selected_ctries <- selected_countries()
+    if (is.null(selected_ctries) || length(selected_ctries) == 0) {
+      selected_ctries <- unique(labor_data_raw$Country)
+    }
+    
+    # Filter data by selected countries
+    data <- labor_data_raw[labor_data_raw$Country %in% selected_ctries, ]
+    
+    # Check if we have data after filtering
+    if (nrow(data) == 0) {
+      return(data.frame())
+    }
     
     # Filter by selected bonus types if any are selected
     if (!is.null(input$bonus_types) && length(input$bonus_types) > 0) {
       bonus_cols <- paste0("Bonus_", gsub("Bonus_", "", input$bonus_types))
       keep_cols <- c("Country", "Code", bonus_cols)
-      data <- data[, names(data) %in% keep_cols]
+      # Ensure all columns exist before filtering
+      available_cols <- names(data)[names(data) %in% keep_cols]
+      if (length(available_cols) > 2) {  # At least Country, Code, and one bonus column
+        data <- data[, available_cols, drop = FALSE]
+      }
     }
     
+    # Convert to long format
     data_long <- data %>%
       pivot_longer(cols = starts_with("Bonus_"), 
                    names_to = "bonus_type", 
                    values_to = "value", 
                    names_prefix = "Bonus_") %>%
-      filter(!is.na(value), value > 0) %>%
+      filter(!is.na(value) & value > 0) %>%
       mutate(
         bonus_type = paste("Bonus", bonus_type),
         x_label = paste0(Code, "\n", wrap_country(Country)),
@@ -232,26 +249,28 @@ labor_server <- function(input, output, session) {
       mutate(x_label = factor(x_label, levels = unique(x_label)))
     
     # Add custom tooltip text with country information
-    data_long$tooltip_text <- sapply(seq_len(nrow(data_long)), function(i) {
-      country <- data_long$Country[i]
-      info <- country_info[[country]]
-      
-      if (!is.null(info)) {
-        paste0(
-          "<b style='color: #0f3559; font-size: 16px;'>", country, "</b><br>",
-          "────────────────────────<br>",
-          "<b style='color: #d62728; font-size: 14px;'>Yearly Bonuses:</b><br>",
-          "<span style='font-size: 13px; line-height: 1.4;'>", gsub("<br>", "<br>• ", paste0("• ", info$yearly_bonuses)), "</span><br><br>",
-          "<b style='color: #d62728; font-size: 14px;'>Legislation:</b><br>",
-          "<span style='font-size: 13px; line-height: 1.4;'>", gsub("<br>", "<br>• ", paste0("• ", info$legislation)), "</span>"
-        )
-      } else {
-        paste0(
-          "<b style='color: #0f3559; font-size: 14px;'>", country, ifelse(data_long$Code[i] != "", paste(" (", data_long$Code[i], ")", sep = ""), ""), "</b><br>",
-          data_long$bonus_type[i], ": <b>", round(data_long$value[i], 2), "</b> monthly wages"
-        )
-      }
-    })
+    if (nrow(data_long) > 0) {
+      data_long$tooltip_text <- sapply(seq_len(nrow(data_long)), function(i) {
+        country <- data_long$Country[i]
+        info <- country_info[[country]]
+        
+        if (!is.null(info)) {
+          paste0(
+            "<b style='color: #0f3559; font-size: 16px;'>", country, "</b><br>",
+            "────────────────────────<br>",
+            "<b style='color: #d62728; font-size: 14px;'>Yearly Bonuses:</b><br>",
+            "<span style='font-size: 13px; line-height: 1.4;'>", gsub("<br>", "<br>• ", paste0("• ", info$yearly_bonuses)), "</span><br><br>",
+            "<b style='color: #d62728; font-size: 14px;'>Legislation:</b><br>",
+            "<span style='font-size: 13px; line-height: 1.4;'>", gsub("<br>", "<br>• ", paste0("• ", info$legislation)), "</span>"
+          )
+        } else {
+          paste0(
+            "<b style='color: #0f3559; font-size: 14px;'>", country, ifelse(data_long$Code[i] != "", paste(" (", data_long$Code[i], ")", sep = ""), ""), "</b><br>",
+            data_long$bonus_type[i], ": <b>", round(data_long$value[i], 2), "</b> monthly wages"
+          )
+        }
+      })
+    }
     
     data_long
   })
@@ -322,6 +341,15 @@ labor_server <- function(input, output, session) {
     
     data$fill_id <- factor(data$fill_id, levels = unique_ids)
     
+    # Calculate y-axis limits safely
+    y_max <- tryCatch({
+      max(aggregate(value ~ x_label, data, sum, na.rm = TRUE)$value, na.rm = TRUE) * 1.1
+    }, error = function(e) {
+      max(data$value, na.rm = TRUE) * 1.1
+    })
+    
+    if (is.infinite(y_max) || is.na(y_max)) y_max <- 5
+    
     # Create plot
     p <- ggplot(data, aes(x = x_label, y = value, fill = fill_id, 
                           group = bonus_type, text = tooltip_text)) +
@@ -330,12 +358,12 @@ labor_server <- function(input, output, session) {
       labs(y = "Yearly bonuses in number of monthly wages") +
       theme_nyt() +
       scale_y_continuous(
-        limits = c(0, max(aggregate(value ~ x_label, data, sum)$value) * 1.1),
+        limits = c(0, y_max),
         expand = c(0, 0),
-        breaks = seq(0, 10, by = 1)
+        breaks = seq(0, ceiling(y_max), by = 1)
       )
     
-    if(isTRUE(input$show_values)) {
+    if(isTRUE(input$show_values) && nrow(data) > 0) {
       data_labels <- data %>%
         group_by(x_label) %>%
         arrange(desc(bonus_type)) %>%
@@ -347,19 +375,23 @@ labor_server <- function(input, output, session) {
     }
     
     # Add country separators
-    separator_positions <- c()
-    current_country <- data$Country[1]
-    for(i in 2:nrow(data)) {
-      if(data$Country[i] != current_country) {
-        pos_index <- which(levels(data$x_label) == data$x_label[i])[1]
-        if(length(pos_index) > 0) separator_positions <- c(separator_positions, pos_index - 0.5)
-        current_country <- data$Country[i]
+    if (nrow(data) > 1) {
+      separator_positions <- c()
+      current_country <- data$Country[1]
+      for(i in 2:nrow(data)) {
+        if(data$Country[i] != current_country) {
+          pos_index <- which(levels(data$x_label) == data$x_label[i])[1]
+          if(length(pos_index) > 0 && !is.na(pos_index)) {
+            separator_positions <- c(separator_positions, pos_index - 0.5)
+          }
+          current_country <- data$Country[i]
+        }
       }
-    }
-    
-    if(length(separator_positions) > 0) {
-      p <- p + geom_vline(xintercept = separator_positions, 
-                          color = "#d0d0d0", size = 0.5, linetype = "solid")
+      
+      if(length(separator_positions) > 0) {
+        p <- p + geom_vline(xintercept = separator_positions, 
+                            color = "#d0d0d0", size = 0.5, linetype = "solid")
+      }
     }
     
     ggplotly(p, tooltip = "text") %>%

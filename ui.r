@@ -1,417 +1,236 @@
-# ==========================================
-# UI - REGULATORY FRAMEWORKS EXPLORER
-# World Bank Group
-# ==========================================
+# ============================
+# UI sources for each page
+# ============================
 
-library(shiny)
-library(shiny.router)
+source("tabs/ui/country_home.R", local = TRUE)  # Loads country_home
+source("tabs/ui/guide.R", local = TRUE)
+source("tabs/ui/about.R", local = TRUE)
+source("tabs/ui/forthcoming.R", local = TRUE) 
 
-# ==========================================
-# DEFINICIONES DE PAÍSES Y TÓPICOS
-# ==========================================
+# ============================
+# MAIN UI
+# ============================
 
-countries <- list(
-  argentina = "Argentina",
-  bolivia = "Bolivia",
-  brazil = "Brazil",
-  chile = "Chile",
-  colombia = "Colombia",
-  costa_rica = "Costa Rica",
-  dominican_republic = "Dominican Republic",
-  ecuador = "Ecuador",
-  el_salvador = "El Salvador",
-  guatemala = "Guatemala",
-  honduras = "Honduras",
-  mexico = "Mexico",
-  nicaragua = "Nicaragua",
-  panama = "Panama",
-  paraguay = "Paraguay",
-  peru = "Peru",
-  uruguay = "Uruguay",
-  venezuela = "Venezuela"
-)
-
-topics <- list(
-  labor = list(
-    title = "Non-Salary Labor Costs",
-    description = "Yearly bonuses in number of monthly wages across Latin America",
-    active = TRUE,
-    badge = NULL
-  ),
-  minwage = list(
-    title = "Minimum wages",
-    description = "Yearly bonuses in number of monthly wages across Latin America",
-    active = FALSE,
-    badge = "FORTHCOMING"
-  ),
-  btax = list(
-    title = "Business taxes",
-    description = "Yearly bonuses in number of monthly wages across Latin America",
-    active = FALSE,
-    badge = "FORTHCOMING"
-  )
-)
-
-# ==========================================
-# PÁGINA 1: EXPLORER (Landing Page)
-# ==========================================
-
-page_explorer <- tags$div(
-  class = "main-content",
-  
-  # Hero Banner
-  tags$div(class = "hero-banner"),
-  
-  # Page Section
-  tags$div(
-    class = "page-section",
+shinyUI(
+  fluidPage(
+    shinyjs::useShinyjs(),
     
-    # Title and Description
-    h1(class = "page-title", "Regulatory Frameworks Explorer"),
-    p(
-      class = "page-subtitle",
-      "Explore comprehensive data on non-salary labor costs, minimum wages, business taxes, and social assistance across Latin American countries. Dive into interactive visualizations and detailed analyses to understand regional regulatory frameworks."
+    # ---- HEAD ----
+    tags$head(
+      tags$title("Regulatory Frameworks Explorer"),
+      tags$link(
+        href = "https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600&family=Source+Sans+Pro:wght@300;400;600&display=swap",
+        rel = "stylesheet"
+      ),
+      includeCSS("www/styles.css"),
+      
+      # ---- JAVASCRIPT TO CONTROL TABS ----
+      tags$script(HTML("
+      document.addEventListener('DOMContentLoaded', function() {
+    
+        // Function to update active state
+        function updateActiveNav(activeTab) {
+          // Remove active class from all nav links
+          document.querySelectorAll('.nav-link').forEach(function(link) {
+            link.classList.remove('active');
+          });
+          
+          // Add active class to the current tab
+          const activeLink = document.querySelector('.nav-link[data-tab=\"' + activeTab + '\"]');
+          if (activeLink) {
+            activeLink.classList.add('active');
+          }
+        }
+    
+        // Set initial active state (landing page)
+        updateActiveNav('landing');
+    
+        // Attach click handler to each header nav link
+        document.querySelectorAll('.nav-link').forEach(function(link) {
+          link.addEventListener('click', function(e) {
+            e.preventDefault();
+    
+            // Get the tab name from data-tab attribute
+            let tab = this.getAttribute('data-tab');
+    
+            // Update active state immediately
+            updateActiveNav(tab);
+    
+            // Find the hidden Shiny tab button that matches this name
+            let tabButton = document.querySelector(
+              'a[data-value=\"' + tab + '\"]'
+            );
+    
+            // Simulate a click to switch the tab
+            if (tabButton) {
+              tabButton.click();
+            }
+          });
+        });
+    
+        // Listen for tab changes (in case tabs are changed programmatically)
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.attributeName === 'class') {
+              const tabs = document.querySelectorAll('#main_tabs > .tab-pane');
+              tabs.forEach(function(tab) {
+                if (tab.classList.contains('active')) {
+                  const tabValue = tab.getAttribute('data-value');
+                  if (tabValue) {
+                    updateActiveNav(tabValue);
+                  }
+                }
+              });
+            }
+          });
+        });
+    
+        // Observe tab changes
+        const tabPanes = document.querySelectorAll('#main_tabs > .tab-pane');
+        tabPanes.forEach(function(pane) {
+          observer.observe(pane, { attributes: true });
+        });
+    
+      });
+    "))
     ),
     
-    # Section Divider
+    # ---- HEADER ----
     tags$div(
-      class = "section-divider",
-      "CHOOSE A REGULATORY FRAMEWORK TOPIC TO EXPLORE DETAILED DATA AND VISUALIZATIONS"
-    ),
-    
-    # Topics Grid
-    tags$div(
-      class = "topics-grid",
-      
-      # Card 1: Non-Salary Labor Costs (Active)
+      class = "header",
       tags$div(
-        class = "topic-card",
-        id = "card-labor",
-        onclick = "Shiny.setInputValue('topic_card_clicked', 'labor', {priority: 'event'});",
-        tags$div(class = "topic-card-header labor"),
-        h3(class = "topic-card-title", "Non-Salary Labor Costs"),
-        p(class = "topic-card-description", 
-          "Yearly bonuses in number of monthly wages across Latin America")
-      ),
-      
-      # Card 2: Minimum Wages (Forthcoming)
-      tags$div(
-        class = "topic-card disabled",
-        tags$div(class = "topic-card-header minwage"),
-        h3(class = "topic-card-title", "Minimum wages"),
-        p(class = "topic-card-description", 
-          "Yearly bonuses in number of monthly wages across Latin America"),
-        tags$span(class = "topic-card-badge", "FORTHCOMING")
-      ),
-      
-      # Card 3: Business Taxes (Forthcoming)
-      tags$div(
-        class = "topic-card disabled",
-        tags$div(class = "topic-card-header btax"),
-        h3(class = "topic-card-title", "Business taxes"),
-        p(class = "topic-card-description", 
-          "Yearly bonuses in number of monthly wages across Latin America"),
-        tags$span(class = "topic-card-badge", "FORTHCOMING")
-      )
-    )
-  ),
-  
-  # Footer
-  tags$div(
-    class = "footer",
-    tags$p(class = "footer-text", "© 2025 World Bank Group")
-  )
-)
-
-# ==========================================
-# PÁGINA 2: GUIDE (How to Read the Data)
-# ==========================================
-
-page_guide <- tags$div(
-  class = "main-content",
-  
-  # Hero Banner
-  tags$div(class = "hero-banner"),
-  
-  # Page Section
-  tags$div(
-    class = "page-section",
-    
-    # Title and Description
-    h1(class = "page-title", "How to read the data"),
-    p(
-      class = "page-subtitle",
-      "Explore comprehensive data on non-salary labor costs, minimum wages, business taxes, and social assistance across Latin American countries. Dive into interactive visualizations and detailed analyses to understand regional regulatory frameworks."
-    ),
-    
-    # Questions List
-    tags$div(
-      class = "questions-list",
-      
-      tags$div(
-        class = "question-item",
-        tags$p(class = "question-text", "QUESTION 1")
-      ),
-      
-      tags$div(
-        class = "question-item",
-        tags$p(class = "question-text", "QUESTION 2")
-      ),
-      
-      tags$div(
-        class = "question-item",
-        tags$p(class = "question-text", "QUESTION 3")
-      ),
-      
-      tags$div(
-        class = "question-item",
-        tags$p(class = "question-text", "QUESTION 4")
-      ),
-      
-      tags$div(
-        class = "question-item",
-        tags$p(class = "question-text", "QUESTION 5")
-      ),
-      
-      tags$div(
-        class = "question-item",
-        tags$p(class = "question-text", "QUESTION 6")
-      )
-    )
-  ),
-  
-  # Footer
-  tags$div(
-    class = "footer",
-    tags$p(class = "footer-text", "© 2025 World Bank Group")
-  )
-)
-
-# ==========================================
-# PÁGINA 3: ABOUT (The Project)
-# ==========================================
-
-page_about <- tags$div(
-  class = "main-content",
-  
-  # Hero Banner
-  tags$div(class = "hero-banner"),
-  
-  # Page Section
-  tags$div(
-    class = "page-section",
-    
-    # Title and Description
-    h1(class = "page-title", "The project"),
-    p(
-      class = "page-subtitle",
-      "Explore comprehensive data on non-salary labor costs, minimum wages, business taxes, and social assistance across Latin American countries. Dive into interactive visualizations and detailed analyses to understand regional regulatory frameworks."
-    ),
-    
-    # Info Sections
-    tags$div(
-      class = "info-sections",
-      
-      # Contact Section
-      tags$div(
-        class = "info-section",
-        h3(class = "info-section-title", "CONTACT"),
+        class = "header-content",    # ← Cambio de clase
+        
+        # Logo PRIMERO (izquierda)
+        tags$img(src = "WB.png", class = "wb-logo"),
+        
+        # Menú DESPUÉS (derecha)
         tags$div(
-          class = "info-section-content",
-          p("For more information about this project, please contact us at:"),
-          p(tags$strong("Email:"), " contact@worldbank.org"),
-          p(tags$strong("Phone:"), " +1 (202) 473-1000")
+          class = "nav-menu",
+          tags$a("Explorer", class = "nav-link", `data-tab` = "landing"),
+          tags$a("Guide", class = "nav-link", `data-tab` = "Guide"),
+          tags$a("About", class = "nav-link", `data-tab` = "About")
         )
-      ),
-      
-      # Team Section
-      tags$div(
-        class = "info-section",
-        h3(class = "info-section-title", "TEAM"),
-        tags$div(
-          class = "info-section-content",
-          p("This project was developed by a dedicated team of researchers and data scientists at the World Bank Group."),
-          tags$ul(
-            tags$li("Project Lead: [Name]"),
-            tags$li("Data Analysis: [Name]"),
-            tags$li("Development: [Name]"),
-            tags$li("Design: [Name]")
+      )
+    ),
+    
+    # ---- MAIN BODY ----
+    div(
+      class = "main-content",
+      tabsetPanel(
+        id = "main_tabs",
+        type="hidden",
+        selected = "landing",
+        
+        # ============================
+        # 1. LANDING PAGE
+        # ============================
+        tabPanel(
+          "landing",
+          tags$section(
+            class = "page-section",
+            tags$div(
+              class = "container",
+              
+              # Hero Banner
+              tags$div(class = "hero-banner"),
+              # Two Column Layout for Title and Description
+              tags$div(
+                class = "row",
+                style = "margin-bottom: 60px;",
+                
+                # Left Column: Title
+                tags$div(
+                  class = "col-md-6",
+                  h1(
+                    class = "page-title",
+                    style = "border-bottom: 3px solid #00C1FF; padding-bottom: 15px; display: inline-block;",
+                    "Regulatory", tags$br(), "Frameworks Explorer"
+                  )
+                ),
+                
+                # Right Column: Description
+                tags$div(
+                  class = "col-md-6",
+                  p(
+                    class = "page-subtitle",
+                    style = "margin-top: 0;",
+                    "Explore comprehensive data on non-salary labor costs, minimum wages, business taxes, and social assistance across Latin American countries. Dive into interactive visualizations and detailed analyses to understand regional regulatory frameworks."
+                  )
+                )
+              ),
+              
+              # Section Divider
+              tags$div(
+                class = "section-divider",
+                "CHOOSE A REGULATORY FRAMEWORK TOPIC TO EXPLORE DETAILED DATA AND VISUALIZATIONS"
+              ),
+              
+              
+              tags$div(class = "topic-grid",
+                       tags$div(class = "topic-card", 
+                                onclick = "Shiny.setInputValue('topic_selected', 'labor', {priority: 'event'})",
+                                h3("Non-salary Labor Costs"),
+                                p("Yearly bonuses, social security contributions, and employment benefits")
+                       ),
+                       # Minimum Wages
+                       tags$div(
+                         class = "topic-card disabled",
+                         onclick = "document.querySelector('a[data-value=\"forthcoming\"]').click();",
+                         h3("Minimum Wages"),
+                         p("Minimum wage policies and trends across the region"),
+                         tags$span(class = "topic-card-badge", "FORTHCOMING")
+                       ),
+                       
+                       # Business Taxes
+                       tags$div(
+                         class = "topic-card disabled",
+                         onclick = "document.querySelector('a[data-value=\"forthcoming\"]').click();",
+                         h3("Business Taxes"),
+                         p("Corporate tax rates, incentives, and fiscal policies"),
+                         tags$span(class = "topic-card-badge", "FORTHCOMING")
+                       )
+                       
+                       
+                                       
+              ),
+            
+              tags$div(
+                class = "footer",
+                tags$p(class = "footer-text", "© 2025 World Bank Group")
+              )     
+            )
+          )
+        ),
+        
+        # ============================
+        # 2. Guide 
+        # ============================
+        tabPanel("Guide", guide), 
+        
+        # ============================
+        # 3. About
+        # ============================
+        tabPanel(
+          "About", about
+        ),
+        # En la sección de tabsetPanel, después de "About"
+        tabPanel(
+          "forthcoming",
+          forthcoming
+        ),
+        # ============================
+        # 4. CONTENT MODULE PAGE
+        # ============================
+        tabPanel(
+          "content",
+          div(
+            class = "content-area",
+            uiOutput("dynamic_content")
           )
         )
       )
     )
-  ),
-  
-  # Footer
-  tags$div(
-    class = "footer",
-    tags$p(class = "footer-text", "© 2025 World Bank Group")
   )
 )
 
-# ==========================================
-# PÁGINA 4: COUNTRIES SELECTION
-# ==========================================
-
-page_countries <- tags$div(
-  class = "main-content",
-  
-  # Back Button
-  tags$a(
-    href = route_link("/"),
-    class = "btn btn-back",
-    "← Back to Topics"
-  ),
-  
-  # Page Section
-  tags$div(
-    class = "page-section",
-    
-    # Title
-    h1(class = "page-title", "Select a Country"),
-    p(class = "page-subtitle", 
-      "Choose a Latin American country to explore detailed regulatory data"),
-    
-    # Countries Grid - Dynamic Content
-    uiOutput("country_grid")
-  ),
-  
-  # Footer
-  tags$div(
-    class = "footer",
-    tags$p(class = "footer-text", "© 2025 World Bank Group")
-  )
-)
-
-# ==========================================
-# PÁGINA 5: COUNTRY TOPICS (Después de seleccionar país)
-# ==========================================
-
-page_country_topics <- tags$div(
-  class = "main-content",
-  
-  # Dynamic content will be rendered here
-  uiOutput("country_topics_content"),
-  
-  # Footer
-  tags$div(
-    class = "footer",
-    tags$p(class = "footer-text", "© 2025 World Bank Group")
-  )
-)
-
-# ==========================================
-# PÁGINA 6: CONTENT (Data Visualization)
-# ==========================================
-
-page_content <- tags$div(
-  class = "main-content",
-  
-  # Back Button
-  tags$a(
-    href = "#",
-    class = "btn btn-back",
-    id = "btn_back_from_content",
-    "← Back"
-  ),
-  
-  # Dynamic Module Content
-  uiOutput("module_content"),
-  
-  # Footer
-  tags$div(
-    class = "footer",
-    tags$p(class = "footer-text", "© 2025 World Bank Group")
-  )
-)
-
-# ==========================================
-# UI PRINCIPAL
-# ==========================================
-
-ui <- fluidPage(
-  
-  # CSS Styles
-  tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
-    
-    # Google Fonts - National Park (fallback to Source Sans Pro if not available)
-    tags$link(
-      rel = "stylesheet",
-      href = "https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap"
-    ),
-    
-    # Custom Scripts
-    tags$script(HTML("
-      // Debugging helper
-      console.log('=== Regulatory Frameworks Explorer Initialized ===');
-      
-      // Add active class to navigation
-      Shiny.addCustomMessageHandler('setActiveNav', function(page) {
-        $('.nav-link').removeClass('active');
-        $('.nav-link[data-page=\"' + page + '\"]').addClass('active');
-        console.log('Active nav set to:', page);
-      });
-      
-      // Card click debugging
-      $(document).on('click', '.topic-card:not(.disabled)', function() {
-        console.log('Topic card clicked:', $(this).attr('id'));
-      });
-      
-      $(document).on('click', '.country-card', function() {
-        console.log('Country card clicked');
-      });
-    "))
-  ),
-  
-  # Header
-  tags$div(
-    class = "header",
-    tags$div(
-      class = "header-content",
-      
-      # Logo
-      tags$img(
-        src = "https://www.worldbank.org/content/dam/wbr-redesign/logos/logo-wb-header-en.svg",
-        class = "wb-logo",
-        alt = "World Bank Group"
-      ),
-      
-      # Navigation Menu
-      tags$div(
-        class = "nav-menu",
-        
-        tags$a(
-          href = route_link("/"),
-          class = "nav-link active",
-          "data-page" = "explorer",
-          "EXPLORER"
-        ),
-        
-        tags$a(
-          href = route_link("guide"),
-          class = "nav-link",
-          "data-page" = "guide",
-          "GUIDE"
-        ),
-        
-        tags$a(
-          href = route_link("about"),
-          class = "nav-link",
-          "data-page" = "about",
-          "ABOUT"
-        )
-      )
-    )
-  ),
-  
-  # Router
-  router_ui(
-    route("/", page_explorer),
-    route("guide", page_guide),
-    route("about", page_about),
-    route("countries", page_countries),
-    route("country_topics", page_country_topics),
-    route("content", page_content)
-  )
-)

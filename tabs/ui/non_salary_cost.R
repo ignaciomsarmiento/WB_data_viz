@@ -63,7 +63,7 @@ labor_ui <- function(id) {
                    h3("SOURCES", style = "color: #1e3a5f; font-weight: bold; border-bottom: 2px solid #5fc4e3; padding-bottom: 10px;"),
                    tags$p(
                      style = "font-size: 13px;",
-                     "Add your sources here..."
+                     "TBD"
                    )
                  ),
                  
@@ -73,7 +73,7 @@ labor_ui <- function(id) {
                    h3("DETAILS", style = "color: #1e3a5f; font-weight: bold; border-bottom: 2px solid #5fc4e3; padding-bottom: 10px;"),
                    tags$p(
                      style = "font-size: 13px;",
-                     "Add your details here..."
+                     "TBD"
                    )
                  ),
                  
@@ -108,13 +108,18 @@ labor_ui <- function(id) {
                      tags$div(
                        style = "display: flex; align-items: center; gap: 20px; margin-bottom: 20px;",
                        
-                       # Label FILTER
-                       tags$span("FILTER", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
+                       
                        
                        # -------- Wage FILTER --------
                        tags$div(
                          style = "display: flex; align-items: center; gap: 10px;",
-                         tags$span("WAGE ▲", style = "font-weight: bold; color: #333; font-size: 14px;"),
+                         tags$div(
+                           style = "margin-bottom: 15px;",
+                           tags$div(
+                             "Non-Salary Labor Costs as Multiples of Monthly Wages",
+                             style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"
+                           )
+                         ),
                          
                          tags$div(
                            style = "display: flex; gap: 8px;",
@@ -146,7 +151,7 @@ labor_ui <- function(id) {
                        tags$div(style = "width: 2px; height: 30px; background-color: #e0e0e0; margin: 0 20px;"),
                        
                        # -------- VIEW FILTER --------
-                       tags$span("VIEW", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
+                       tags$span("Data breakdown by:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
                        
                        tags$div(
                          style = "display: flex; gap: 8px;",

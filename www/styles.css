@@ -25,7 +25,7 @@
 
 body {
   font-family: 'National Park', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--white);
+  background: var(--light-gray); 
   color: var(--text-dark);
   margin: 0;
   padding: 0;
@@ -36,64 +36,77 @@ body {
 /* ==========================================
    HEADER & NAVIGATION
    ========================================== */
+/* ==========================================
+   HEADER & NAVIGATION
+   ========================================== */
 .header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background: var(--white);
+  background: var(--white);              /* ← Te recomiendo blanco */
   z-index: 2000;
   padding: 10px 40px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   height: 80px;
   border-bottom: 1px solid var(--border-gray);
 }
 
 .header-content {
-  display: flex;
-  justify-content: space-between;
+  display: grid;                         /* ← CAMBIO: grid en vez de flex */
+  grid-template-columns: 200px 1fr 200px;  /* ← CLAVE: 3 columnas (izq, centro, der) */
   align-items: center;
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
+  height: 100%;
 }
 
 .wb-logo {
-  height: 50px;
+  height: 30px;
   width: auto;
+  mix-blend-mode: multiply;
+  justify-self: start;                   /* ← Logo a la izquierda */
 }
 
+/* Navegación centrada */
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 4px;
+  justify-self: center;                  /* ← CLAVE: Centra en el grid */
+  background: var(--light-gray);
+  border-radius: 50px;
+  padding: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .nav-link {
   font-family: 'National Park', sans-serif;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--solid-blue);
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding: 8px 0;
-  border-bottom: 3px solid transparent;
+  padding: 12px 28px;
+  border-radius: 50px;
   transition: all 0.3s ease;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .nav-link:hover {
+  background: var(--white);
   color: var(--bright-blue);
-  border-bottom-color: var(--bright-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 193, 255, 0.2);
 }
 
 .nav-link.active {
-  color: var(--bright-blue);
-  border-bottom-color: var(--bright-blue);
+  background: var(--bright-blue);
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(0, 193, 255, 0.3);
 }
 
 /* ==========================================
@@ -101,7 +114,7 @@ body {
    ========================================== */
 .hero-banner {
   width: 100%;
-  height: 250px;
+  height: 150px;
   background: linear-gradient(135deg, 
     var(--solid-blue) 0%, 
     var(--solid-blue-60) 50%, 
@@ -142,7 +155,7 @@ body {
    ========================================== */
 .page-title {
   font-family: 'National Park', sans-serif;
-  font-size: 3rem;
+  font-size: 3em;
   font-weight: 700;
   color: var(--solid-blue);
   margin-bottom: 20px;
@@ -151,7 +164,7 @@ body {
 
 .page-subtitle {
   font-family: 'National Park', sans-serif;
-  font-size: 1.2rem;
+  font-size: 2rem;
   color: var(--solid-blue-60);
   line-height: 1.8;
   max-width: 800px;
@@ -160,7 +173,7 @@ body {
 
 .section-divider {
   font-family: 'National Park', sans-serif;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: var(--solid-blue);
   text-transform: uppercase;
@@ -173,11 +186,18 @@ body {
 /* ==========================================
    TOPIC CARDS (Landing Page)
    ========================================== */
-.topics-grid {
+.topic-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(3, 1fr);  /* 3 columnas en desktop */
   gap: 30px;
   margin-top: 40px;
+}
+
+/* En móvil: 1 columna */
+@media (max-width: 768px) {
+  .topic-grid {
+    grid-template-columns: 1fr;  /* 1 columna en móvil */
+  }
 }
 
 .topic-card {

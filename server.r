@@ -1,274 +1,172 @@
-# ==========================================
-# SERVER - REGULATORY FRAMEWORKS EXPLORER
-# World Bank Group
-# ==========================================
-
-library(shiny)
-library(shiny.router)
-
-server <- function(input, output, session) {
+shinyServer(function(input, output, session) {
   
-  # ==========================================
+  # =========================================================================
   # REACTIVE VALUES
-  # ==========================================
+  # =========================================================================
   
   navigation <- reactiveValues(
-    selected_country = NULL,
+    current_view = "landing",
+    previous_view = NULL,
     selected_topic = NULL,
-    current_page = "explorer"
+    selected_country = NULL
   )
   
-  # ==========================================
-  # NAVIGATION TRACKING
-  # ==========================================
+  # =========================================================================
+  # CONFIGURATION
+  # =========================================================================
   
-  # Actualizar active nav cuando cambia la ruta
-  observeEvent(get_page(), {
-    page <- get_page()
-    message("DEBUG: Current page = ", page)
-    
-    # Determinar qué página mostrar en el nav
-    nav_page <- if(page == "/" || page == "countries" || page == "country_topics" || page == "content") {
-      "explorer"
-    } else {
-      page
-    }
-    
-    navigation$current_page <- nav_page
-    session$sendCustomMessage("setActiveNav", nav_page)
-  })
-  
-  # ==========================================
-  # TOPIC CARD CLICK (Landing Page)
-  # ==========================================
-  
-  observeEvent(input$topic_card_clicked, {
-    topic <- input$topic_card_clicked
-    message("DEBUG: Topic card clicked = ", topic)
-    
-    if (topic == "labor") {
-      navigation$selected_topic <- topic
-      change_page("countries")
-    } else {
-      showNotification(
-        "This topic is coming soon!",
-        type = "warning",
-        duration = 3
-      )
-    }
-  })
-  
-  # ==========================================
-  # COUNTRY GRID RENDERING
-  # ==========================================
-  
-  output$country_grid <- renderUI({
-    message("DEBUG: Rendering country_grid")
-    
-    country_cards <- lapply(names(countries), function(country_id) {
-      tags$div(
-        class = "country-card",
-        onclick = sprintf(
-          "console.log('Country clicked: %s'); Shiny.setInputValue('country_selected', '%s', {priority: 'event'});",
-          country_id, country_id
-        ),
-        h4(class = "country-name", countries[[country_id]])
-      )
-    })
-    
-    tags$div(
-      class = "countries-grid",
-      country_cards
+  topics <- list(
+    labor = list(
+      title = "Non-salary Labor Costs",
+      description = "Yearly bonuses, social security contributions, and employment benefits",
+      ui_function = "render_labor_ui",
+      server_function = "labor_server"
+    ),
+    minwage = list(
+      title = "Minimum Wages",
+      description = "Minimum wage policies and trends across the region",
+      ui_function = "render_minwage_ui",
+      server_function = "minwage_server"
+    ),
+    btax = list(
+      title = "Business Taxes",
+      description = "Corporate tax rates, incentives, and fiscal policies",
+      ui_function = "render_btax_ui",
+      server_function = "btax_server"
+    ),
+    social = list(
+      title = "Social Assistance",
+      description = "Social programs, welfare systems, and poverty alleviation policies",
+      ui_function = "render_social_ui",
+      server_function = "social_server"
     )
+  )
+  
+  countries <- list(
+    argentina = "Argentina",
+    bolivia = "Bolivia",
+    brazil = "Brazil",
+    chile = "Chile",
+    colombia = "Colombia",
+    costa_rica = "Costa Rica",
+    dominican = "Dominican Republic",
+    ecuador = "Ecuador",
+    el_salvador = "El Salvador",
+    guatemala = "Guatemala",
+    honduras = "Honduras",
+    mexico = "Mexico",
+    nicaragua = "Nicaragua",
+    panama = "Panama",
+    paraguay = "Paraguay",
+    peru = "Peru",
+    uruguay = "Uruguay",
+    venezuela = "Venezuela"
+  )
+  
+  # =========================================================================
+  # NAVIGATION HANDLERS
+  # =========================================================================
+  
+  observeEvent(input$topic_selected, {
+    navigation$selected_topic <- input$topic_selected
+    navigation$selected_country <- NULL
+    navigation$previous_view <- "topics"
+    navigation$current_view <- "content"
+    
+    updateTabsetPanel(session, "main_tabs", selected = "content")
   })
   
-  # ==========================================
-  # COUNTRY SELECTION
-  # ==========================================
+  # =========================================================================
+  # DYNAMIC CONTENT RENDERING  (REACTIVATED FOR TOPICS)
+  # =========================================================================
   
-  observeEvent(input$country_selected, {
-    country <- input$country_selected
-    message("DEBUG: Country selected = ", country)
+  output$dynamic_content <- renderUI({
     
-    navigation$selected_country <- country
-    change_page("country_topics")
-  })
-  
-  # ==========================================
-  # COUNTRY TOPICS PAGE RENDERING
-  # ==========================================
-  
-  output$country_topics_content <- renderUI({
-    message("DEBUG: Rendering country_topics_content")
-    message("DEBUG: selected_country = ", navigation$selected_country)
-    message("DEBUG: selected_topic = ", navigation$selected_topic)
-    
-    if (is.null(navigation$selected_country)) {
-      return(
-        tags$div(
-          class = "page-section text-center",
-          h3("No country selected"),
-          p("Please go back and select a country."),
-          tags$a(
-            href = route_link("countries"),
-            class = "btn btn-secondary",
-            "← Back to Countries"
-          )
-        )
-      )
-    }
-    
-    country_name <- countries[[navigation$selected_country]]
-    message("DEBUG: Country name = ", country_name)
-    
-    # Crear las tarjetas de topics para este país
-    topic_cards <- lapply(names(topics), function(topic_id) {
-      topic <- topics[[topic_id]]
+    # ---- TOPIC SELECTED ----
+    if (!is.null(navigation$selected_topic)) {
+      topic_id <- navigation$selected_topic
       
-      card_class <- paste0("topic-card", if(!topic$active) " disabled" else "")
-      card_onclick <- if(topic$active) {
-        sprintf(
-          "console.log('Topic clicked: %s for country: %s'); Shiny.setInputValue('topic_for_country_clicked', '%s', {priority: 'event'});",
-          topic_id, navigation$selected_country, topic_id
-        )
-      } else {
-        ""
+      # LABOR — Non-Salary Costs
+      if (topic_id == "labor") {
+        source("tabs/ui/non_salary_cost.R", local = TRUE)$value
+        return(labor_ui("labor"))
       }
       
-      # Determinar la clase del header
-      header_class <- paste0("topic-card-header ", topic_id)
+      # Other topic UIs
+      ui_func_name <- topics[[topic_id]]$ui_function
+      if (exists(ui_func_name)) {
+        return(do.call(ui_func_name, list()))
+      }
       
-      tags$div(
-        class = card_class,
-        onclick = card_onclick,
-        tags$div(class = header_class),
-        h3(class = "topic-card-title", topic$title),
-        p(class = "topic-card-description", topic$description),
-        if(!is.null(topic$badge)) {
-          tags$span(class = "topic-card-badge", topic$badge)
-        }
+      return(
+        div(class = "text-center", style = "padding: 50px;",
+            h3("Topic not implemented"))
       )
-    })
+    }
     
-    tagList(
-      # Back Button
-      tags$a(
-        href = route_link("countries"),
-        class = "btn btn-back",
-        "← Back to Countries"
-      ),
-      
-      # Page Section
-      tags$div(
-        class = "page-section",
-        
-        # Title
-        h1(class = "page-title", paste("Select a Topic for", country_name)),
-        p(class = "page-subtitle", 
-          "Choose a regulatory framework topic to explore detailed data and visualizations"),
-        
-        # Section Divider
-        tags$div(
-          class = "section-divider",
-          "AVAILABLE TOPICS"
-        ),
-        
-        # Topics Grid
-        tags$div(
-          class = "topics-grid",
-          topic_cards
-        )
-      )
+    # ---- COUNTRY SELECTED ----
+    if (!is.null(navigation$selected_country)) {
+      country_id <- navigation$selected_country
+      country_name <- countries[[country_id]]
+      return(render_country_dashboard(country_name, country_id))
+    }
+    
+    return(
+      div(class = "text-center", style = "padding: 50px;",
+          h3("No selection made"))
     )
   })
   
-  # ==========================================
-  # TOPIC FOR COUNTRY CLICK
-  # ==========================================
+  # =========================================================================
+  # UI RENDERING FUNCTIONS
+  # =========================================================================
   
-  observeEvent(input$topic_for_country_clicked, {
-    topic <- input$topic_for_country_clicked
-    message("DEBUG: Topic for country clicked = ", topic)
-    message("DEBUG: Current country = ", navigation$selected_country)
-    
-    navigation$selected_topic <- topic
-    change_page("content")
-  })
+  render_labor_ui <- function() {
+    source("tabs/ui/non_salary_cost.R", local = TRUE)$value
+    labor_ui("labor")
+  }
   
-  # ==========================================
-  # MODULE CONTENT RENDERING
-  # ==========================================
+  render_minwage_ui <- function() {
+    source("modules/minwage/ui.R", local = TRUE)$value
+    minwage_ui("minwage")
+  }
   
-  output$module_content <- renderUI({
-    message("DEBUG: Rendering module_content")
-    message("DEBUG: Topic = ", navigation$selected_topic)
-    message("DEBUG: Country = ", navigation$selected_country)
+  render_btax_ui <- function() {
+    source("modules/btax/ui.R", local = TRUE)$value
+    btax_ui("btax")
+  }
+  
+  render_social_ui <- function() {
+    source("modules/social/ui.R", local = TRUE)$value
+    social_ui("social")
+  }
+  
+  # =========================================================================
+  # MODULE SERVER CALLS  (SIMPLIFIED)
+  # =========================================================================
+  
+  observeEvent(navigation$selected_topic, {
+    topic_id <- navigation$selected_topic
     
-    req(navigation$selected_topic)
-    
-    topic_title <- topics[[navigation$selected_topic]]$title
-    country_name <- if(!is.null(navigation$selected_country)) {
-      countries[[navigation$selected_country]]
-    } else {
-      "All Countries"
+    if (topic_id == "labor") {
+      source("tabs/server/non_salary_cost.R", local = TRUE)$value
+      callModule(labor_server, "labor")
     }
     
-    # Placeholder content - aquí irían los módulos reales
-    tags$div(
-      class = "page-section",
-      
-      h1(class = "page-title", topic_title),
-      h3(style = "color: #002244; margin-bottom: 30px;", 
-         paste("Data for:", country_name)),
-      
-      tags$div(
-        style = "background: #F1F3F5; padding: 40px; border-radius: 8px; border: 1px solid #B9BAB5;",
-        h4("Content Module Coming Soon"),
-        p("This is where the actual data visualization and analysis will appear."),
-        p(paste("Topic:", topic_title)),
-        p(paste("Country:", country_name)),
-        
-        tags$div(
-          class = "mt-40",
-          tags$a(
-            href = route_link("country_topics"),
-            class = "btn btn-secondary",
-            "← Back to Topics"
-          ),
-          tags$a(
-            href = route_link("countries"),
-            class = "btn btn-secondary",
-            style = "margin-left: 15px;",
-            "← Back to Countries"
-          )
-        )
-      )
-    )
-  })
-  
-  # ==========================================
-  # BACK BUTTON FROM CONTENT
-  # ==========================================
-  
-  observeEvent(input$btn_back_from_content, {
-    message("DEBUG: Back button clicked from content")
+    if (topic_id == "minwage") {
+      source("modules/minwage/server.R", local = TRUE)$value
+      callModule(minwage_server, "minwage")
+    }
     
-    if(!is.null(navigation$selected_country)) {
-      change_page("country_topics")
-    } else {
-      change_page("/")
+    if (topic_id == "btax") {
+      source("modules/btax/server.R", local = TRUE)$value
+      callModule(btax_server, "btax")
+    }
+    
+    if (topic_id == "social") {
+      source("modules/social/server.R", local = TRUE)$value
+      callModule(social_server, "social")
     }
   })
   
-  # ==========================================
-  # DEBUG INFO
-  # ==========================================
-  
-  observe({
-    message("=== NAVIGATION STATE ===")
-    message("Current Page: ", navigation$current_page)
-    message("Selected Country: ", ifelse(is.null(navigation$selected_country), "NULL", navigation$selected_country))
-    message("Selected Topic: ", ifelse(is.null(navigation$selected_topic), "NULL", navigation$selected_topic))
-    message("========================")
-  })
-}
+})

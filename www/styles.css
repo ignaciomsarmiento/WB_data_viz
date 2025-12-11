@@ -1,361 +1,505 @@
-body{
-  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #fff;
-  color: #1a1a1a;
-  margin: 0;
-  padding: 0;
-  padding-top: 80px; /* Add padding to body to account for fixed header */
-  font-size: 16px; /* Base font size increased */
+/* ==========================================
+   WORLD BANK GROUP - REGULATORY FRAMEWORKS EXPLORER
+   Colores y estilos oficiales
+   ========================================== */
+
+/* Variables de color */
+:root {
+  --light-gray: #F1F3F5;
+  --border-gray: #B9BAB5;
+  --solid-blue: #002244;
+  --solid-blue-60: rgba(0, 34, 68, 0.6);
+  --bright-blue: #00C1FF;
+  --white: #ffffff;
+  --text-dark: #1a1a1a;
 }
 
-/* Header styles */
+/* ==========================================
+   BASE STYLES
+   ========================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'National Park', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--white);
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+  padding-top: 80px;
+  line-height: 1.6;
+}
+
+/* ==========================================
+   HEADER & NAVIGATION
+   ========================================== */
 .header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background: #fff;
+  background: var(--white);
   z-index: 2000;
-  padding: 10px 20px;
+  padding: 10px 40px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: block;
-  height: 64px; /* Set explicit height */
-  box-sizing: border-box; /* Include padding in height calculation */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 80px;
+  border-bottom: 1px solid var(--border-gray);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .wb-logo {
-  height: 44px;
-  float: right;
+  height: 50px;
+  width: auto;
 }
 
-/* Navigation menu styles */
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 40px;
 }
 
 .nav-link {
-  font-family: 'Source Sans Pro', sans-serif;
-  font-size: 1.3rem; /* Increased from 1.1rem */
+  font-family: 'National Park', sans-serif;
+  font-size: 1rem;
   font-weight: 600;
-  color: #0f3559;
+  color: var(--solid-blue);
   text-decoration: none;
-  padding: 10px 16px; /* Increased padding */
-  border-radius: 4px;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 8px 0;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
   cursor: pointer;
 }
 
 .nav-link:hover {
-  background: #0f3559;
-  color: #fff;
+  color: var(--bright-blue);
+  border-bottom-color: var(--bright-blue);
 }
 
-/* Landing page styles */
-.landing-section {
-  min-height: calc(100vh - 80px); /* Subtract header height from viewport */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: left;
-  padding: 2rem;
-  background: linear-gradient(180deg, rgba(248, 249, 250, 0.8), #fff);
-  padding-top: 20px; /* Reduced since body now has padding */
+.nav-link.active {
+  color: var(--bright-blue);
+  border-bottom-color: var(--bright-blue);
 }
 
-.main-title {
-  font-family: 'Source Serif Pro', Georgia, serif;
-  font-size: 4rem; /* Increased from 3.5rem */
-  font-weight: 600;
-  line-height: 1.1;
-  color: #1a1a1a;
-  margin-bottom: 1rem;
-}
-
-.subtitle {
-  font-size: 1.5rem; /* Increased from 1.25rem */
-  color: #333;
-  font-weight: 400;
-  margin-bottom: 2rem;
-  max-width: 600px;
-}
-
-.intro-text {
-  font-size: 1.3rem; /* Increased from 1.125rem */
-  color: #111;
-  max-width: 600px;
-  line-height: 1.6;
-  margin-bottom: 2.5rem;
-}
-
-.cta-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem 2.5rem; /* Increased padding */
-  font-size: 1.4rem; /* Increased from 1.25rem */
-  font-weight: 600;
-  color: #fff;
-  background: #0f3559;
-  border-radius: 9999px;
-  transition: background-color 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border: none;
-  cursor: pointer;
-  margin-right: 1rem;
-  margin-bottom: 1rem;
-}
-
-.cta-button:hover {
-  background: #1a4a7a;
-  color: #fff;
-}
-
-.hero-image {
-  max-height: 500px;
-  object-fit: contain;
+/* ==========================================
+   HERO BANNER
+   ========================================== */
+.hero-banner {
   width: 100%;
+  height: 250px;
+  background: linear-gradient(135deg, 
+    var(--solid-blue) 0%, 
+    var(--solid-blue-60) 50%, 
+    rgba(0, 193, 255, 0.3) 100%);
+  border-radius: 12px;
+  margin-bottom: 60px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Country selection page styles */
-.country-main-title { 
-  font-family:'Source Serif Pro', Georgia, serif; 
-  font-size: 3.5rem; /* Increased from 48px */
-  font-weight: 600; 
-  line-height:1.1; 
-  margin-left: 78px; 
-  margin-top: 24px; 
+.hero-banner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0,50 Q25,30 50,50 T100,50" stroke="rgba(255,255,255,0.1)" fill="none" stroke-width="2"/></svg>');
+  opacity: 0.3;
 }
 
-.country-subtitle { 
-  font-size: 1.4rem; /* Increased from 20px */
-  color:#333; 
-  margin: 10px 0 24px 78px; 
-  font-weight: 400; 
+/* ==========================================
+   MAIN CONTENT CONTAINER
+   ========================================== */
+.main-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px;
 }
 
-.xlines { 
-  margin-left: 78px; 
-  margin-top: 20px; 
-  max-width: 980px; 
-  color:#111; 
-  font-size: 1.1rem; /* Increased from 16px */
-  letter-spacing: 1px; 
-  line-height: 1.6; 
+.page-section {
+  min-height: calc(100vh - 200px);
+  padding: 40px 0;
 }
 
-/* Pill buttons row */
-.pill-row { 
-  margin-left: 60px; 
-  margin-top: 40px; 
-  display:flex; 
-  gap:48px; 
-  flex-wrap: wrap; 
+/* ==========================================
+   PAGE TITLES
+   ========================================== */
+.page-title {
+  font-family: 'National Park', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--solid-blue);
+  margin-bottom: 20px;
+  text-align: left;
 }
 
-.pill {
-  display:flex; 
-  align-items:center; 
-  justify-content:center;
-  width: 280px; 
-  height: 140px; 
-  border-radius: 9999px;
-  background:#0f3559; 
-  color:#fff; 
-  font-weight: 600; 
-  font-size: 1.4rem; /* Increased from 20px */
-  border: 0; 
-  box-shadow: 0 2px 8px rgba(0,0,0,.08); 
-  cursor:pointer;
-}
-
-.pill:focus { 
-  outline:none; 
-}
-
-.pill:hover { 
-  filter: brightness(1.05); 
-}
-
-/* Topic selection page styles */
-.topic-page {
-  padding: 20px 20px 40px 20px; /* Reduced top padding since body has padding */
-  min-height: calc(100vh - 80px); /* Account for header height */
-}
-
-.topic-header {
-  text-align: center;
+.page-subtitle {
+  font-family: 'National Park', sans-serif;
+  font-size: 1.2rem;
+  color: var(--solid-blue-60);
+  line-height: 1.8;
+  max-width: 800px;
   margin-bottom: 60px;
 }
 
-.topic-title {
-  font-family: 'Source Serif Pro', Georgia, serif;
-  font-size: 3rem; /* Increased from 2.5rem */
+.section-divider {
+  font-family: 'National Park', sans-serif;
+  font-size: 0.9rem;
   font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 1rem;
+  color: var(--solid-blue);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 60px 0 30px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--bright-blue);
 }
 
-.topic-subtitle {
-  font-size: 1.3rem; /* Increased from 1.125rem */
-  color: #666;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.topic-grid {
+/* ==========================================
+   TOPIC CARDS (Landing Page)
+   ========================================== */
+.topics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
+  margin-top: 40px;
 }
 
 .topic-card {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 30px;
-  text-align: center;
-  transition: all 0.3s ease;
+  background: var(--white);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  padding: 40px 30px;
   cursor: pointer;
-  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.topic-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--bright-blue);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
 }
 
 .topic-card:hover {
-  background: #0f3559;
-  color: white;
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgba(0, 34, 68, 0.15);
+  border-color: var(--bright-blue);
 }
 
-.topic-card h3 {
-  font-family: 'Source Serif Pro', Georgia, serif;
-  font-size: 1.8rem; /* Increased from 1.5rem */
+.topic-card:hover::before {
+  transform: scaleX(1);
+}
+
+.topic-card.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.topic-card.disabled:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border-gray);
+}
+
+.topic-card-header {
+  height: 120px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--solid-blue) 0%, var(--solid-blue-60) 100%);
+}
+
+.topic-card-header.labor {
+  background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
+}
+
+.topic-card-header.minwage {
+  background: linear-gradient(135deg, #2D5F5D 0%, #1A3A38 100%);
+}
+
+.topic-card-header.btax {
+  background: linear-gradient(135deg, #8B3A62 0%, #6B1B42 100%);
+}
+
+.topic-card-title {
+  font-family: 'National Park', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--solid-blue);
   margin-bottom: 15px;
 }
 
-.topic-card p {
-  font-size: 1.1rem; /* Increased from 0.95rem */
-  line-height: 1.5;
-  margin: 0;
+.topic-card-description {
+  font-family: 'National Park', sans-serif;
+  font-size: 1rem;
+  color: var(--solid-blue-60);
+  line-height: 1.6;
+  margin-bottom: 15px;
 }
 
-.topic-card:hover p {
-  color: rgba(255, 255, 255, 0.9);
+.topic-card-badge {
+  display: inline-block;
+  background: var(--light-gray);
+  color: var(--solid-blue);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-/* Content area styles */
-.content-area {
-  padding-top: 20px; /* Reduced since body has padding */
-  min-height: calc(100vh - 80px); /* Account for header height */
+/* ==========================================
+   GUIDE PAGE - QUESTIONS LIST
+   ========================================== */
+.questions-list {
+  max-width: 900px;
+  margin: 40px 0;
 }
 
-/* Responsive styles */
+.question-item {
+  background: var(--white);
+  border: 1px solid var(--border-gray);
+  border-left: 4px solid var(--bright-blue);
+  padding: 20px 30px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.question-item:hover {
+  background: var(--light-gray);
+  transform: translateX(5px);
+}
+
+.question-text {
+  font-family: 'National Park', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--solid-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ==========================================
+   ABOUT PAGE - INFO SECTIONS
+   ========================================== */
+.info-sections {
+  max-width: 900px;
+}
+
+.info-section {
+  background: var(--white);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  padding: 30px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.info-section:hover {
+  box-shadow: 0 4px 12px rgba(0, 34, 68, 0.1);
+}
+
+.info-section-title {
+  font-family: 'National Park', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--solid-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--bright-blue);
+}
+
+.info-section-content {
+  font-family: 'National Park', sans-serif;
+  font-size: 1rem;
+  color: var(--solid-blue-60);
+  line-height: 1.8;
+}
+
+/* ==========================================
+   COUNTRY SELECTION PAGE
+   ========================================== */
+.countries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.country-card {
+  background: var(--white);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.country-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 34, 68, 0.15);
+  border-color: var(--bright-blue);
+}
+
+.country-name {
+  font-family: 'National Park', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--solid-blue);
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+.btn {
+  font-family: 'National Park', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary {
+  background: var(--bright-blue);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background: var(--solid-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 193, 255, 0.3);
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--solid-blue);
+  border: 2px solid var(--solid-blue);
+}
+
+.btn-secondary:hover {
+  background: var(--solid-blue);
+  color: var(--white);
+}
+
+.btn-back {
+  background: transparent;
+  color: var(--solid-blue);
+  padding: 10px 20px;
+  margin-bottom: 30px;
+  border: 1px solid var(--border-gray);
+}
+
+.btn-back:hover {
+  background: var(--light-gray);
+}
+
+/* ==========================================
+   FOOTER
+   ========================================== */
+.footer {
+  background: var(--light-gray);
+  padding: 30px 40px;
+  text-align: center;
+  border-top: 1px solid var(--border-gray);
+  margin-top: 80px;
+}
+
+.footer-text {
+  font-family: 'National Park', sans-serif;
+  font-size: 0.9rem;
+  color: var(--solid-blue-60);
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN
+   ========================================== */
 @media (max-width: 768px) {
-  body {
-    padding-top: 70px; /* Slightly less padding on mobile */
-  }
-  
   .header {
-    height: 60px; /* Smaller header on mobile */
-    padding: 8px 15px;
-  }
-  
-  .wb-logo {
-    height: 36px; /* Smaller logo on mobile */
-  }
-  
-  .main-title, .country-main-title {
-    font-size: 2rem;
-    margin-left: 20px;
-  }
-  
-  .subtitle, .country-subtitle {
-    margin-left: 20px;
-  }
-  
-  .pill-row {
-    margin-left: 20px;
-  }
-  
-  .topic-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .landing-section {
-    padding: 1rem;
-    padding-top: 10px; /* Minimal top padding since body has padding */
-    min-height: calc(100vh - 70px); /* Account for smaller mobile header */
-  }
-  
-  .topic-page {
-    padding: 10px 20px 40px 20px;
-    min-height: calc(100vh - 70px);
-  }
-  
-  .content-area {
-    padding-top: 10px;
-    min-height: calc(100vh - 70px);
-  }
-  
-  .hero-image {
-    max-height: 300px;
+    padding: 10px 20px;
+    height: auto;
   }
   
   .nav-menu {
-    gap: 10px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
   }
   
-  .nav-link {
-    font-size: 1rem;
-    padding: 6px 10px;
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .topics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .countries-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .main-content {
+    padding: 20px;
   }
 }
 
-
-
-/* Non salary cost */
-
-.three-buttons-container {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.pretty-button {
-  background-color: #ffffff;
-  padding: 20px 35px;
-  border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  font-size: 18px;
-  font-weight: 600;
+/* ==========================================
+   UTILITY CLASSES
+   ========================================== */
+.text-center {
   text-align: center;
-  color: #333;
-  transition: all 0.2s ease-in-out;
 }
 
-.pretty-button:hover {
-  background-color: #f2f2f2;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 15px rgba(0,0,0,0.12);
-}
-
-/* Selected Button */
-.pretty-button.active {
-  background-color: #e0f0ff; 
-  box-shadow: 0 6px 12px rgba(0,0,0,0.2); 
-  transform: translateY(-1px); 
-}
-
-.no-default-btn {
-  background: transparent !important;
-  border: none !important;
-}
-
-.plot-container {
+.mt-40 {
   margin-top: 40px;
-  padding: 20px;
+}
+
+.mb-40 {
+  margin-bottom: 40px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.router-hidden {
+  display: none !important;
 }

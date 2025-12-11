@@ -313,3 +313,49 @@ body{
     padding: 6px 10px;
   }
 }
+
+
+
+/* Non salary cost */
+
+.three-buttons-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pretty-button {
+  background-color: #ffffff;
+  padding: 20px 35px;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  color: #333;
+  transition: all 0.2s ease-in-out;
+}
+
+.pretty-button:hover {
+  background-color: #f2f2f2;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.12);
+}
+
+/* Selected Button */
+.pretty-button.active {
+  background-color: #e0f0ff; 
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2); 
+  transform: translateY(-1px); 
+}
+
+.no-default-btn {
+  background: transparent !important;
+  border: none !important;
+}
+
+.plot-container {
+  margin-top: 40px;
+  padding: 20px;
+}

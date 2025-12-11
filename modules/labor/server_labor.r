@@ -1,6 +1,126 @@
 # modules/labor/server.R
 library(tidyverse)
 
+
+
+
+# Country information for tooltips
+country_info <- list(
+  "Argentina" = list(
+    yearly_bonuses = "1 monthly wage",
+    legislation = "Law 23041 (1983)."
+  ),
+  "Bolivia" = list(
+    yearly_bonuses = "Christmas bonus: 1 monthly wage.<br>Economic growth bonus \"Doble aguinaldo\": 1 monthly wage awarded when the annual June-to-June GDP growth exceeds 4%.<br>Quinquennial bonus: Employees who have been in service for at least 5 years are entitled to five monthly wages paid every five years.<br>Employment tenure bonus (\"Antiguedad\"): 3 MW multiplied by a factor that varies with length of tenure:<br>- 2-4 years: 5%<br>- 5-7 years: 11%<br>- 8-10 years: 18%<br>- 11-14 years: 26%<br>- 15-19 years: 34%<br>- 20-24 years: 42%<br>- 25 or more years: 50%<br>Only employees working within 50km of international borders: Border subsidy: 20% of wages.",
+    legislation = "Law of December 18th (1944) - Christmas bonus.<br>Supreme Decree 21137 (1985) - Bono antiguedad.<br>Supreme Decree 522 (2010) Bono quinquenio.<br>Supreme Decree 1802 (2013) - Doble aguinaldo."
+  ),
+  "Brazil" = list(
+    yearly_bonuses = "Yearly bonus: 1 wage<br>Vacation bonus: equivalent to 1/3 wages.",
+    legislation = "Law 4090 (1962)."
+  ),
+  "Chile" = list(
+    yearly_bonuses = "No mandatory bonuses.",
+    legislation = "Law 18620 (1987) - Labor Code."
+  ),
+  "Colombia" = list(
+    yearly_bonuses = "Workers with wages under 13MW: 1 wage",
+    legislation = "Law 1788 (2016)."
+  ),
+  "Dominican Republic" = list(
+    yearly_bonuses = "Workers earning up to 5 MW: 1 wage<br>Workers earning more than 5 MW: 5 MW",
+    legislation = "Ley 16 (1992) - Labor Code."
+  ),
+  "Ecuador" = list(
+    yearly_bonuses = "2 wages",
+    legislation = "Labor Code (2012)."
+  ),
+  "Honduras" = list(
+    yearly_bonuses = "1 wage",
+    legislation = "Decree No. 112. (1982) Ley del Séptimo Día y Décimo Tercer Mes en Concepto de Aguinaldo."
+  ),
+  "Mexico" = list(
+    yearly_bonuses = "Yearly bonus (Aguinaldo): 0.5 wages<br>Vacation bonus: bonus equivalent to 25% of the wages corresponding to their vacation period.",
+    legislation = "Federal Labor Law (1970). Last reform 2023."
+  ),
+  "Paraguay" = list(
+    yearly_bonuses = "1 wage",
+    legislation = "Law No. 213 (2014). Labor Code."
+  ),
+  "Peru" = list(
+    yearly_bonuses = "Workers in medium and large businesses: 2 wages + corresponding employer health contribution (9% or 6.75% depending on modality).<br>Workers in small and micro businesses: 1 wage.<br>Family bonus: monthly bonus equivalent to 10% of the MW for workers who have children under 18 or children under 24 attending tertiary education.",
+    legislation = "Law No. 27735. Yearly Bonus.<br>Law No. 25129. Family Bonus.<br>Decreto Supremo No. 013-2013-PRODUCE."
+  )
+)
+
+labor_data_raw <- data.frame(
+  Country = c("Argentina", "Bolivia", "Bolivia", "Bolivia", "Bolivia", "Bolivia",
+              "Brazil", "Chile", "Colombia", "Colombia", "Dominican Republic",
+              "Ecuador", "Honduras", "Mexico", "Mexico", "Paraguay", "Peru", 
+              "Paraguay", "Peru", "Paraguay", "Peru", "Paraguay"),
+  Code = c("", "A", "B", "C", "D", "E", "", "", "A", "B", "", "", "", "A", "B", 
+           "A", "A", "B", "C", "D", "E", "F"),
+  Bonus_1 = c(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.3, 0.0, 1.0, 0.0, 1.0, 2.0, 1.0, 
+              0.5, 0.5, 1.0, 2.0, 2.0, 2.0, 2.0, 1.0, 1.0),
+  Bonus_2 = c(NA, NA, 1.0, 1.0, 1.0, 1.0, NA, NA, NA, NA, NA, NA, NA, 0.2, 0.4, 
+              NA, 0.09, 0.07, 0.09, 0.07, NA, NA),
+  Bonus_3 = c(NA, NA, 0.15, 1.5, 1.5, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, 
+              NA, 0.1, 0.1, NA, NA, 0.1, NA),
+  Bonus_4 = c(NA, NA, NA, NA, 0.2, 0.2, NA, NA, NA, NA, NA, NA, NA, NA, NA, 
+              NA, NA, NA, NA, NA, NA, NA),
+  Bonus_5 = c(NA, NA, NA, NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, 
+              NA, NA, NA, NA, NA, NA, NA),
+  stringsAsFactors = FALSE
+)
+
+annual_leave_raw <- data.frame(
+  Country = c(
+    rep("Argentina", 4),
+    rep("Bolivia", 3),
+    rep("Brazil", 4),
+    "Chile",
+    "Colombia",
+    rep("Dominican Republic", 2),
+    rep("Ecuador", 4),
+    rep("Honduras", 4),
+    rep("Mexico", 2),
+    rep("Paraguay", 3),
+    rep("Peru", 2)
+  ),
+  Code = c(
+    "A", "B", "C", "D",
+    "A", "B", "C",
+    "A", "B", "C", "D",
+    "A",
+    "A",
+    "A", "B",
+    "A", "B", "C", "D*",
+    "A", "B", "C", "D",
+    "A", "B",
+    "A", "B", "C",
+    "A", "B"
+  ),
+  Bonus_1 = c(
+    14, 21, 28, 35,
+    15, 20, 30,
+    12, 18, 24, 30,
+    15,
+    15,
+    14, 18,
+    15, 18, 20, 30,
+    10, 12, 15, 20,
+    12, 32,
+    12, 18, 30,
+    15, 30
+  ),
+  Bonus_2 = NA_real_,
+  Bonus_3 = NA_real_,
+  Bonus_4 = NA_real_,
+  Bonus_5 = NA_real_,
+  stringsAsFactors = FALSE
+)
+
+
+
 labor_server <- function(input, output, session) {
   
   # Get the namespace
@@ -40,75 +160,7 @@ labor_server <- function(input, output, session) {
         plot.margin = margin(10, 20, 10, 10)
       )
   }
-  
-  # Country information for tooltips
-  country_info <- list(
-    "Argentina" = list(
-      yearly_bonuses = "1 monthly wage",
-      legislation = "Law 23041 (1983)."
-    ),
-    "Bolivia" = list(
-      yearly_bonuses = "Christmas bonus: 1 monthly wage.<br>Economic growth bonus \"Doble aguinaldo\": 1 monthly wage awarded when the annual June-to-June GDP growth exceeds 4%.<br>Quinquennial bonus: Employees who have been in service for at least 5 years are entitled to five monthly wages paid every five years.<br>Employment tenure bonus (\"Antiguedad\"): 3 MW multiplied by a factor that varies with length of tenure:<br>- 2-4 years: 5%<br>- 5-7 years: 11%<br>- 8-10 years: 18%<br>- 11-14 years: 26%<br>- 15-19 years: 34%<br>- 20-24 years: 42%<br>- 25 or more years: 50%<br>Only employees working within 50km of international borders: Border subsidy: 20% of wages.",
-      legislation = "Law of December 18th (1944) - Christmas bonus.<br>Supreme Decree 21137 (1985) - Bono antiguedad.<br>Supreme Decree 522 (2010) Bono quinquenio.<br>Supreme Decree 1802 (2013) - Doble aguinaldo."
-    ),
-    "Brazil" = list(
-      yearly_bonuses = "Yearly bonus: 1 wage<br>Vacation bonus: equivalent to 1/3 wages.",
-      legislation = "Law 4090 (1962)."
-    ),
-    "Chile" = list(
-      yearly_bonuses = "No mandatory bonuses.",
-      legislation = "Law 18620 (1987) - Labor Code."
-    ),
-    "Colombia" = list(
-      yearly_bonuses = "Workers with wages under 13MW: 1 wage",
-      legislation = "Law 1788 (2016)."
-    ),
-    "Dominican Republic" = list(
-      yearly_bonuses = "Workers earning up to 5 MW: 1 wage<br>Workers earning more than 5 MW: 5 MW",
-      legislation = "Ley 16 (1992) - Labor Code."
-    ),
-    "Ecuador" = list(
-      yearly_bonuses = "2 wages",
-      legislation = "Labor Code (2012)."
-    ),
-    "Honduras" = list(
-      yearly_bonuses = "1 wage",
-      legislation = "Decree No. 112. (1982) Ley del Séptimo Día y Décimo Tercer Mes en Concepto de Aguinaldo."
-    ),
-    "Mexico" = list(
-      yearly_bonuses = "Yearly bonus (Aguinaldo): 0.5 wages<br>Vacation bonus: bonus equivalent to 25% of the wages corresponding to their vacation period.",
-      legislation = "Federal Labor Law (1970). Last reform 2023."
-    ),
-    "Paraguay" = list(
-      yearly_bonuses = "1 wage",
-      legislation = "Law No. 213 (2014). Labor Code."
-    ),
-    "Peru" = list(
-      yearly_bonuses = "Workers in medium and large businesses: 2 wages + corresponding employer health contribution (9% or 6.75% depending on modality).<br>Workers in small and micro businesses: 1 wage.<br>Family bonus: monthly bonus equivalent to 10% of the MW for workers who have children under 18 or children under 24 attending tertiary education.",
-      legislation = "Law No. 27735. Yearly Bonus.<br>Law No. 25129. Family Bonus.<br>Decreto Supremo No. 013-2013-PRODUCE."
-    )
-  )
-  
-  # Data
-  labor_data_raw <- data.frame(
-    Country = c("Argentina", "Bolivia", "Bolivia", "Bolivia", "Bolivia", "Bolivia",
-                "Brazil", "Chile", "Colombia", "Colombia", "Dominican Republic",
-                "Ecuador", "Honduras", "Mexico", "Mexico", "Paraguay", "Peru", 
-                "Paraguay", "Peru", "Paraguay", "Peru", "Paraguay"),
-    Code = c("", "A", "B", "C", "D", "E", "", "", "A", "B", "", "", "", "A", "B", 
-             "A", "A", "B", "C", "D", "E", "F"),
-    Bonus_1 = c(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.3, 0.0, 1.0, 0.0, 1.0, 2.0, 1.0, 
-                0.5, 0.5, 1.0, 2.0, 2.0, 2.0, 2.0, 1.0, 1.0),
-    Bonus_2 = c(NA, NA, 1.0, 1.0, 1.0, 1.0, NA, NA, NA, NA, NA, NA, NA, 0.2, 0.4, 
-                NA, 0.09, 0.07, 0.09, 0.07, NA, NA),
-    Bonus_3 = c(NA, NA, 0.15, 1.5, 1.5, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, 
-                NA, 0.1, 0.1, NA, NA, 0.1, NA),
-    Bonus_4 = c(NA, NA, NA, NA, 0.2, 0.2, NA, NA, NA, NA, NA, NA, NA, NA, NA, 
-                NA, NA, NA, NA, NA, NA, NA),
-    Bonus_5 = c(NA, NA, NA, NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, 
-                NA, NA, NA, NA, NA, NA, NA),
-    stringsAsFactors = FALSE
-  )
+ 
   
   # Reactive values
   selected_countries <- reactiveVal(unique(labor_data_raw$Country))
@@ -264,16 +316,7 @@ labor_server <- function(input, output, session) {
     data_long
   })
   
-  # Data summary - removed since UI no longer includes this
-  # output$data_summary <- renderText({
-  #   data <- processed_data()
-  #   if(nrow(data) == 0) return("No data available for selected filters")
-  #   n_countries <- length(unique(data$Country))
-  #   n_entries <- nrow(data)
-  #   avg_bonus <- round(mean(data$value, na.rm = TRUE), 2)
-  #   paste0(n_countries, " countries, ", n_entries, " data points\nAverage bonus: ", 
-  #          avg_bonus, " monthly wages")
-  # })
+
   
   # Main plot
   output$labor_costs_plot <- renderPlotly({
@@ -352,17 +395,7 @@ labor_server <- function(input, output, session) {
         breaks = seq(0, ceiling(y_max), by = 1)
       )
     
-    # Remove the "show values" feature since the option was removed
-    # if(isTRUE(input$show_values) && nrow(data) > 0) {
-    #   data_labels <- data %>%
-    #     group_by(x_label) %>%
-    #     arrange(desc(bonus_type)) %>%
-    #     mutate(cumsum_value = cumsum(value), 
-    #            label_pos = cumsum_value - value/2)
-    #   p <- p + geom_text(data = data_labels, 
-    #                      aes(y = label_pos, label = round(value, 1)),
-    #                      size = 2.5, color = "white", fontface = "bold")
-    # }
+
     
     # Add country separators
     if (nrow(data) > 1) {

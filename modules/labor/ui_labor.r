@@ -1,5 +1,75 @@
 # modules/labor/ui.R
 
+
+labor_data_raw <- data.frame(
+  Country = c("Argentina", "Bolivia", "Bolivia", "Bolivia", "Bolivia", "Bolivia",
+              "Brazil", "Chile", "Colombia", "Colombia", "Dominican Republic",
+              "Ecuador", "Honduras", "Mexico", "Mexico", "Paraguay", "Peru", 
+              "Paraguay", "Peru", "Paraguay", "Peru", "Paraguay"),
+  Code = c("", "A", "B", "C", "D", "E", "", "", "A", "B", "", "", "", "A", "B", 
+           "A", "A", "B", "C", "D", "E", "F"),
+  Bonus_1 = c(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.3, 0.0, 1.0, 0.0, 1.0, 2.0, 1.0, 
+              0.5, 0.5, 1.0, 2.0, 2.0, 2.0, 2.0, 1.0, 1.0),
+  Bonus_2 = c(NA, NA, 1.0, 1.0, 1.0, 1.0, NA, NA, NA, NA, NA, NA, NA, 0.2, 0.4, 
+              NA, 0.09, 0.07, 0.09, 0.07, NA, NA),
+  Bonus_3 = c(NA, NA, 0.15, 1.5, 1.5, 1.5, NA, NA, NA, NA, NA, NA, NA, NA, NA, 
+              NA, 0.1, 0.1, NA, NA, 0.1, NA),
+  Bonus_4 = c(NA, NA, NA, NA, 0.2, 0.2, NA, NA, NA, NA, NA, NA, NA, NA, NA, 
+              NA, NA, NA, NA, NA, NA, NA),
+  Bonus_5 = c(NA, NA, NA, NA, NA, 5.0, NA, NA, NA, NA, NA, NA, NA, NA, NA, 
+              NA, NA, NA, NA, NA, NA, NA),
+  stringsAsFactors = FALSE
+)
+
+annual_leave_raw <- data.frame(
+  Country = c(
+    rep("Argentina", 4),
+    rep("Bolivia", 3),
+    rep("Brazil", 4),
+    "Chile",
+    "Colombia",
+    rep("Dominican Republic", 2),
+    rep("Ecuador", 4),
+    rep("Honduras", 4),
+    rep("Mexico", 2),
+    rep("Paraguay", 3),
+    rep("Peru", 2)
+  ),
+  Code = c(
+    "A", "B", "C", "D",
+    "A", "B", "C",
+    "A", "B", "C", "D",
+    "A",
+    "A",
+    "A", "B",
+    "A", "B", "C", "D*",
+    "A", "B", "C", "D",
+    "A", "B",
+    "A", "B", "C",
+    "A", "B"
+  ),
+  Bonus_1 = c(
+    14, 21, 28, 35,
+    15, 20, 30,
+    12, 18, 24, 30,
+    15,
+    15,
+    14, 18,
+    15, 18, 20, 30,
+    10, 12, 15, 20,
+    12, 32,
+    12, 18, 30,
+    15, 30
+  ),
+  Bonus_2 = NA_real_,
+  Bonus_3 = NA_real_,
+  Bonus_4 = NA_real_,
+  Bonus_5 = NA_real_,
+  stringsAsFactors = FALSE
+)
+
+
+
 labor_ui <- function(id) {
   ns <- NS(id)
   
@@ -16,7 +86,21 @@ labor_ui <- function(id) {
           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .country-btn:hover { background:#f5f5f5; border-color:#999; }
-        .selected-country { background:#d62728 !important; color:#fff !important; border-color:#d62728 !important; font-weight:500; }
+        .selected-country { background:#d62728 !important; color:#fff !important; border-color:#d62728 !important; font-weight:500;
+        .benefit-panel { margin-bottom: 10px; }
+  .benefit-buttons { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+  .benefit-btn {
+    font-size:12px; padding:6px 10px;
+    border-radius:14px; border:1px solid #ccc;
+    background:#fff; color:#333;
+  }
+  .benefit-btn:hover { background:#f5f5f5; border-color:#999; }
+  .selected-benefit {
+    background:#0f3559 !important;
+    color:#fff !important;
+    border-color:#0f3559 !important;
+    font-weight:500;
+  }
       ")),
       
       # JavaScript for button updates (namespaced)
@@ -65,6 +149,28 @@ labor_ui <- function(id) {
       
       mainPanel(
         width = 9,  # Using integer width to balance with width 3
+        div(
+          class = "non_salary_components-panel",
+          div(
+            class = "non_salary_components-buttons",
+            actionButton(ns("bonuses_n_benefits"), "Bonuses and Benefits", class = "btn benefit-btn selected-benefit"),
+            actionButton(ns("contributory_sss"), "Contributory Social Security System", class = "btn benefit-btn"),
+            actionButton(ns("payroll"), "Payroll taxes", class = "btn benefit-btn")
+          )
+        ),
+        div(
+          class = "benefit-panel",
+          div(
+            class = "benefit-buttons",
+            actionButton(ns("benefit_yearly"), "Yearly bonuses", class = "btn benefit-btn selected-benefit"),
+            actionButton(ns("benefit_annual"), "Annual leave", class = "btn benefit-btn"),
+            actionButton(ns("benefit_unemp"), "Unemployment protection", class = "btn benefit-btn"),
+            actionButton(ns("benefit_other"), "Other benefits", class = "btn benefit-btn"),
+            actionButton(ns("benefit_severance"), "Severance payment", class = "btn benefit-btn"),
+            actionButton(ns("benefit_parental"), "Parental leave", class = "btn benefit-btn")
+          )
+        ),
+        
         plotlyOutput(ns("labor_costs_plot"), height = "650px"),
         conditionalPanel(
           condition = paste0("input['", ns("show_notes"), "']"),

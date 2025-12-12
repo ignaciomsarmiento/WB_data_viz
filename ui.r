@@ -2,7 +2,7 @@
 # UI sources for each page
 # ============================
 
-source("tabs/ui/country_home.R", local = TRUE)  # Loads country_home
+
 source("tabs/ui/guide.R", local = TRUE)
 source("tabs/ui/about.R", local = TRUE)
 source("tabs/ui/forthcoming.R", local = TRUE) 
@@ -25,6 +25,12 @@ shinyUI(
       includeCSS("www/styles.css"),
       
       # ---- JAVASCRIPT TO CONTROL TABS ----
+      tags$script(HTML("
+        Shiny.addCustomMessageHandler('trigger-download', function(id) {
+          const el = document.getElementById(id);
+          if (el) el.click();
+        });
+      ")),
       tags$script(HTML("
       document.addEventListener('DOMContentLoaded', function() {
     
@@ -155,7 +161,7 @@ shinyUI(
                   p(
                     class = "page-subtitle",
                     style = "margin-top: 0;",
-                    "Explore comprehensive data on non-salary labor costs, minimum wages, business taxes, and social assistance across Latin American countries. Dive into interactive visualizations and detailed analyses to understand regional regulatory frameworks."
+                    "Explore comprehensive data on non-salary labor costs, minimum wages, and business taxes, across  countries. Dive into interactive visualizations and detailed analyses to understand regional regulatory frameworks."
                   )
                 )
               ),

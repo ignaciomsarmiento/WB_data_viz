@@ -24,6 +24,7 @@ library(tidyverse)
 library(DT)
 library(readxl)
 library(tidyr)
+library(reactable)
 
 # ----  Dates ----
 library(lubridate)

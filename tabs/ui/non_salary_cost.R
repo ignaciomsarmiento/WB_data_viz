@@ -11,12 +11,23 @@ labor_ui <- function(id) {
       .pill-button:hover {
         opacity: 0.85;
       }
+      
+      .component-btn.active {
+        background-color: #00C1FF !important;
+        color: white !important;
+      }
+      .component-btn:hover {
+        opacity: 0.85;
+      }
     ")),
-    
     tags$script(HTML("
       $(document).on('click', '.topic-page .pill-button', function(e) {
         var $container = $(this).closest('.topic-page');
         $container.find('.pill-button').removeClass('active');
+        $(this).addClass('active');
+      });
+      $(document).on('click', '.component-btn', function(e) {
+        $('.component-btn').removeClass('active');
         $(this).addClass('active');
       });
     ")),
@@ -80,10 +91,16 @@ labor_ui <- function(id) {
                  # -------- DOWNLOAD & SHARE BUTTONS --------
                  tags$div(
                    style = "display: flex; gap: 10px;",
-                   actionButton(
-                     ns("btn_download"),
-                     "DOWNLOAD",
+                   # actionButton(
+                   #   ns("btn_download"),
+                   #   "DOWNLOAD",
+                   #   style = "background-color: #1e3a5f; color: white; border-radius: 25px; padding: 10px 20px; font-weight: bold; border: none;"
+                   # ),
+                   downloadButton(
+                     outputId = ns("download_df"),
+                     label = "DOWNLOAD",
                      style = "background-color: #1e3a5f; color: white; border-radius: 25px; padding: 10px 20px; font-weight: bold; border: none;"
+                     
                    ),
                    actionButton(
                      ns("btn_share"),
@@ -112,61 +129,85 @@ labor_ui <- function(id) {
                        
                        # -------- Wage FILTER --------
                        tags$div(
-                         style = "display: flex; align-items: center; gap: 10px;",
-                         tags$div(
-                           style = "margin-bottom: 15px;",
-                           tags$div(
-                             "Non-Salary Labor Costs as Multiples of Monthly Wages",
-                             style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"
-                           )
-                         ),
-                         
-                         tags$div(
-                           style = "display: flex; gap: 8px;",
-                           
-                           actionButton(ns("btn_sm1"), "1MW",
+                          style = "display: flex; flex-direction: column; gap: 10px;",
+                          
+                          # ----- Título -----
+                          tags$div(
+                            "Non-Salary Labor Costs as Multiples of Minimum Wages",
+                            style = "font-weight: bold; color: #b0b0b0; font-size: 14px; margin-bottom: 5px;"
+                          ),
+                          
+                          # ----- Fila de botones -----
+                          tags$div(
+                            style = "display: flex; gap: 8px;",
+                            
+                            actionButton(ns("btn_sm1"), "1MW",
                                         class = "pill-button active",
-                                        style = "background-color: #f0f0f0; color: #333; border: none; border-radius: 20px; padding: 6px 18px;")
-                           ,
-                           
-                           actionButton(ns("btn_sm2"), "2MW",
+                                        style = "background-color: #f0f0f0; color: #333;
+                                                  border: none; border-radius: 20px; padding: 6px 18px;"),
+                            
+                            actionButton(ns("btn_sm2"), "2MW",
                                         class = "pill-button",
-                                        style = "background-color: #f0f0f0; color: #333; border: none; border-radius: 20px; padding: 6px 18px;"),
-                           
-                           actionButton(ns("btn_sm5"), "5MW",
+                                        style = "background-color: #f0f0f0; color: #333;
+                                                  border: none; border-radius: 20px; padding: 6px 18px;"),
+                            
+                            actionButton(ns("btn_sm5"), "5MW",
                                         class = "pill-button",
-                                        style = "background-color: #f0f0f0; color: #333; border: none; border-radius: 20px; padding: 6px 18px;"),
-                           
-                           actionButton(ns("btn_sm10"), "10MW",
+                                        style = "background-color: #f0f0f0; color: #333;
+                                                  border: none; border-radius: 20px; padding: 6px 18px;"),
+                            
+                            actionButton(ns("btn_sm10"), "10MW",
                                         class = "pill-button",
-                                        style = "background-color: #f0f0f0; color: #333; border: none; border-radius: 20px; padding: 6px 18px;"),
-                           
-                           actionButton(ns("btn_sm15"), "15MW",
+                                        style = "background-color: #f0f0f0; color: #333;
+                                                  border: none; border-radius: 20px; padding: 6px 18px;"),
+                            
+                            actionButton(ns("btn_sm15"), "15MW",
                                         class = "pill-button",
-                                        style = "background-color: #f0f0f0; color: #333; border: none; border-radius: 20px; padding: 6px 18px;")
-                         )
-                       ),
+                                        style = "background-color: #f0f0f0; color: #333;
+                                                  border: none; border-radius: 20px; padding: 6px 18px;")
+                          ),
+                          
+                          # ----- Select debajo -----
+                          tags$div(
+                            style = "margin-top: 5px;",
+                            uiOutput(ns("country_selection"))
+                          )
+                        ),
+
                        
                        # Separador
                        tags$div(style = "width: 2px; height: 30px; background-color: #e0e0e0; margin: 0 20px;"),
                        
-                       # -------- VIEW FILTER --------
-                       tags$span("Data breakdown by:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
                        
-                       tags$div(
-                         style = "display: flex; gap: 8px;",
-                         
-                         actionButton(ns("btn_total"), "TOTAL",
-                                      class = "pill-button active",
-                                      style = "background-color: #f0f0f0; color: #333; border-radius: 20px; padding: 6px 18px;"),
-                         
-                         actionButton(ns("btn_payer"), "BY PAYER",
-                                      class = "pill-button",
-                                      style = "background-color: #f0f0f0; color: #333; border-radius: 20px; padding: 6px 18px;"),
-                         
-                         actionButton(ns("btn_component"), "BY COMPONENT",
-                                      class = "pill-button",
-                                      style = "background-color: #f0f0f0; color: #333; border-radius: 20px; padding: 6px 18px;")
+                       tags$div(style = "display: flex; flex-direction: column; gap: 6px; position: relative;",
+                          tags$div(
+
+
+                          style = "display: flex; gap: 8px; align-items: center;",
+                          
+                          # -------- VIEW FILTER --------
+                          tags$span("Data breakdown by:", style = "font-weight: bold; color: #b0b0b0; font-size: 14px;"),
+                       
+                          actionButton(ns("btn_total"), "TOTAL",
+                                        class = "pill-button active",
+                                        style = "background-color: #f0f0f0; color: #333; border-radius: 20px; padding: 6px 18px;"),
+                          
+                          actionButton(ns("btn_payer"), "BY PAYER",
+                                        class = "pill-button",
+                                        style = "background-color: #f0f0f0; color: #333; border-radius: 20px; padding: 6px 18px;"),
+                          
+                          actionButton(ns("btn_component"), "BY COMPONENT",
+                                        class = "pill-button",
+                                        style = "background-color: #f0f0f0; color: #333; border-radius: 20px; padding: 6px 18px;")
+                        ),
+                        tags$div(
+                            class = "component-wrapper-fixed",
+                            uiOutput(ns("component_buttons"))
+                        ),
+                        tags$div(
+                          class = "component-wrapper-fixed",
+                          uiOutput(ns("bonus_buttons"))
+                        )
                        )
                      )
                    )
@@ -177,8 +218,10 @@ labor_ui <- function(id) {
                  
                  # -------- GRÁFICO --------
                  plotlyOutput(ns("plot"), height = "500px"),
-                 tags$br(),
-                 uiOutput(ns("component_buttons"))
+                 div(
+                   style = "margin-top:30px;",
+                   reactable::reactableOutput(ns("tabla_detalle"))
+                 )
                )
              )
     )

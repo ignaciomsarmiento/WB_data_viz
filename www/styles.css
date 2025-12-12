@@ -173,7 +173,7 @@ body {
 
 .section-divider {
   font-family: 'National Park', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--solid-blue);
   text-transform: uppercase;
@@ -523,3 +523,132 @@ body {
 .router-hidden {
   display: none !important;
 }
+
+
+
+/* ADICIONALES JULIAN */
+
+
+/* CONTENEDOR PRINCIPAL – siempre una fila */
+.horizontal-container {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  width:100%;
+  gap:20px;
+}
+
+
+/* ----------------------------------------------------------
+   BOTONES MUY PEQUEÑOS
+-----------------------------------------------------------*/
+.component-buttons-container {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-width:200px;
+}
+
+.component-btn {
+  padding: 2px 6px !important;
+  font-size: 10px !important;
+  height: 10px !important;
+  line-height: 9px !important;
+  border-radius: 12px !important;
+  white-space: nowrap !important;
+}
+
+
+
+
+
+/* ----------------------------------------------------------
+   SELECT MUY PEQUEÑO
+-----------------------------------------------------------*/
+.small-select {
+  min-width: 50px;
+}
+
+/* Label arriba del select */
+.small-select label {
+  font-size: 10px !important;
+  margin-bottom: 2px !important;
+  display: block !important;
+}
+
+/* Texto dentro del select */
+.small-select .selectize-control {
+  font-size: 10px !important;
+  min-height: 24px !important;
+}
+
+.small-select .selectize-input {
+  padding: 2px 4px !important;
+  min-height: 24px !important;
+  font-size: 10px !important;
+}
+
+.small-select .selectize-dropdown {
+  font-size: 10px !important;
+}
+
+
+
+/* ======== SELECT INPUT LINDO ========= */
+.pretty-select label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Contenedor general */
+.pretty-select .selectize-control {
+  border-radius: 8px !important;
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.12);
+  transition: all 0.2s ease-in-out;
+}
+
+/* Input visual */
+.pretty-select .selectize-input {
+  border-radius: 8px !important;
+  border: 1px solid #ccc !important;
+  background: white !important;
+  padding: 6px 10px !important;
+  font-size: 13px !important;
+  height: 36px !important;
+  display: flex;
+  align-items: center;
+}
+
+.pretty-select .selectize-input:hover {
+  border-color: #00aaff !important;
+}
+
+/* Input cuando está activo */
+.pretty-select .selectize-input.focus {
+  border-color: #0099dd !important;
+  box-shadow: 0 0 0 2px rgba(0,153,221,0.2) !important;
+}
+
+/* Dropdown */
+.pretty-select .selectize-dropdown {
+  border-radius: 8px !important;
+  border: 1px solid #ddd !important;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.15) !important;
+  font-size: 13px !important;
+}
+
+/* Items dentro del dropdown */
+.pretty-select .selectize-dropdown .option {
+  padding: 8px 10px !important;
+}
+
+/* Hover sobre items */
+.pretty-select .selectize-dropdown .option:hover {
+  background-color: #f0faff !important;
+  color: #0077b6 !important;
+}
+
+

@@ -6,12 +6,7 @@
 2. [Technology Stack](#2-technology-stack)
 3. [Project Structure](#3-project-structure)
 4. [Installation Guide](#4-installation-guide)
-5. [Configuration](#5-configuration)
-6. [Code Organization](#6-code-organization)
-7. [Key Components](#7-key-components)
-8. [Data Flow](#8-data-flow)
-9. [Customization Guide](#9-customization-guide)
-10. [Development Guidelines](#10-development-guidelines)
+
 
 ---
 
